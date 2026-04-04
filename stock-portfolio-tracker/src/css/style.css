@@ -1,0 +1,15 @@
+@import "tailwindcss";
+
+/* Global Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+/* SVGs */
+svg {
+  width: 24px;
+  height: 24px;
+}

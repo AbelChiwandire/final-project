@@ -64,3 +64,27 @@ export async function loadHeaderFooter() {
     console.error("Error loading header/footer:", err);
   }
 }
+
+// ----------------------------------------------------
+// Data Formatting and Tone Utilities
+// ----------------------------------------------------
+
+export function getToneClass(label, value) {
+  if (
+    value > 0 &&
+    (label === "PnL" || label === "Return %" || label === "Change")
+  ) {
+    return "text-green-600";
+  } else if (
+    value < 0 &&
+    (label === "PnL" || label === "Return %" || label === "Change")
+  ) {
+    return "text-red-600";
+  } else {
+    return "text-gray-500";
+  }
+}
+
+export function formatNumber(value) {
+  return typeof value === "number" && !isNaN(value) ? value.toFixed(2) : "0.00";
+}

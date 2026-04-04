@@ -16,5 +16,9 @@
     "eslint-plugin-import": "^2.32.0",
     "prettier": "^3.8.1",
     "vite": "^8.0.1"
+  },
+  "dependencies": {
+    "@tailwindcss/vite": "^4.2.2",
+    "tailwindcss": "^4.2.2"
   }
 }

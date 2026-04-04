@@ -4,125 +4,164 @@ import StockData from "./../api/StockData.mjs";
 const stockData = new StockData();
 
 export default class PortfolioManager {
-    constructor(userId) {
-      this.userId = userId;
-      this.cache = []; 
-      this.DEFAULT_STOCK_DATA = {
-        currentPrice: 0,
-        highPrice: 0,
-        lowPrice: 0,
-        openPrice: 0,
-        previousClose: 0,
-        percentageChange: 0,
-        change: 0,
-        timestamp: 0,
-      };
+  constructor(userId) {
+    this.userId = userId;
+    this.cache = [];
+    this.DEFAULT_STOCK_DATA = {
+      currentPrice: 0,
+      highPrice: 0,
+      lowPrice: 0,
+      openPrice: 0,
+      previousClose: 0,
+      percentageChange: 0,
+      change: 0,
+      timestamp: 0,
+    };
+  }
+
+  // Field-level validation rules
+  validateField(key, value) {
+    const zeroValidFields = ["change", "percentageChange"];
+
+    if (value == null) return null;
+
+    if (value === 0 && !zeroValidFields.includes(key)) {
+      return null;
     }
 
-    // Field-level validation rules
-    validateField(key, value) {
-      const zeroValidFields = ["change", "percentageChange"];
+    return value;
+  }
 
-      if (value == null) return null;
+  // Apply validation across all stock fields
+  validateStockData(stock) {
+    const validated = { ...stock };
 
-      if (value === 0 && !zeroValidFields.includes(key)) {
-        return null;
+    Object.keys(this.DEFAULT_STOCK_DATA).forEach((key) => {
+      validated[key] = this.validateField(key, validated[key]);
+    });
+
+    return validated;
+  }
+
+  // Load the user's portfolio, fetch current stock data, and cache it
+  async loadPortfolio() {
+    const portfolio = getUserPortfolio(this.userId);
+
+    const fetchPromises = portfolio.map(async (position) => {
+      try {
+        const data = await stockData.getData(position.symbol);
+
+        const merged = {
+          ...position,
+          ...this.DEFAULT_STOCK_DATA,
+          ...data,
+          ...this.computePositionValues({ ...position, ...data }),
+          fetchFailed: false,
+        };
+
+        return this.validateStockData(merged);
+      } catch (err) {
+        console.error(`Failed to fetch ${position.symbol}:`, err);
+
+        const merged = {
+          ...position,
+          ...this.DEFAULT_STOCK_DATA,
+          fetchFailed: true,
+        };
+
+        return this.validateStockData(merged);
       }
+    });
 
-      return value;
+    this.cache = await Promise.all(fetchPromises);
+    return this.cache;
+  }
+
+  computePositionValues(position) {
+    const marketValue = position.currentPrice * position.quantity;
+    const costBasis = position.avgPrice * position.quantity; // or avgPrice for now
+    return { marketValue, costBasis };
+  }
+
+  // Get full cached portfolio
+  getPortfolio() {
+    return this.cache;
+  }
+
+  // Get a single stock's merged data from cache
+  getStock(symbol) {
+    return this.cache.find((s) => s.symbol === symbol) || null;
+  }
+
+  // Add or edit a stock in the portfolio
+  setPosition(symbol, quantity, avgCost) {
+    if (!symbol || quantity == null || avgCost == null) {
+      throw new Error("Invalid position data");
     }
 
-    // Apply validation across all stock fields
-    validateStockData(stock) {
-      const validated = { ...stock };
+    const portfolio = getUserPortfolio(this.userId);
 
-      Object.keys(this.DEFAULT_STOCK_DATA).forEach((key) => {
-        validated[key] = this.validateField(key, validated[key]);
-      });
+    const existingIndex = portfolio.findIndex((p) => p.symbol === symbol);
 
-      return validated;
+    if (existingIndex > -1) {
+      portfolio[existingIndex] = { symbol, quantity, avgCost };
+    } else {
+      portfolio.push({ symbol, quantity, avgCost });
     }
 
-    // Load the user's portfolio, fetch current stock data, and cache it
-    async loadPortfolio() {
-      const portfolio = getUserPortfolio(this.userId);
+    setUserPortfolio(this.userId, portfolio);
 
-      const fetchPromises = portfolio.map(async (position) => {
-        try {
-          const data = await stockData.getData(position.symbol);
+    const cachedIndex = this.cache.findIndex((s) => s.symbol === symbol);
+    if (cachedIndex > -1) {
+      this.cache[cachedIndex] = {
+        ...this.cache[cachedIndex],
+        quantity,
+        avgCost,
+      };
+    } else {
+      this.cache.push({ symbol, quantity, avgCost });
+    }
+  }
 
-          const merged = {
-            ...position,
-            ...this.DEFAULT_STOCK_DATA,
-            ...data,
-            fetchFailed: false,
-          };
+  // Remove a stock from portfolio and cache
+  removePosition(symbol) {
+    let portfolio = getUserPortfolio(this.userId);
+    portfolio = portfolio.filter((p) => p.symbol !== symbol);
+    setUserPortfolio(this.userId, portfolio);
 
-          return this.validateStockData(merged);
+    this.cache = this.cache.filter((s) => s.symbol !== symbol);
+  }
 
-        } catch (err) {
-          console.error(`Failed to fetch ${position.symbol}:`, err);
+  getPortfolioSummary() {
+    const cache = this.cache || [];
 
-          const merged = {
-            ...position,
-            ...this.DEFAULT_STOCK_DATA,
-            fetchFailed: true,
-          };
+    let totalValue = 0;
+    let totalCost = 0;
 
-          return this.validateStockData(merged);
-        }
-      });
+    for (const stock of cache) {
+      if (stock.currentPrice == null) continue;
 
-      this.cache = await Promise.all(fetchPromises);
-      return this.cache;
+      totalValue += stock.currentPrice * stock.quantity;
+      totalCost += stock.avgPrice * stock.quantity;
     }
 
-    // Get full cached portfolio
-    getPortfolio() {
-        return this.cache;
-    }
+    const totalPnL = totalValue - totalCost;
+    const returnPercentage =
+      totalCost === 0 ? null : (totalPnL / totalCost) * 100;
 
-    // Get a single stock's merged data from cache
-    getStock(symbol) {
-        return this.cache.find((s) => s.symbol === symbol) || null;
-    }
+    // Return an array, ready for the UI to format
+    return [
+      { label: "Total Value", value: totalValue },
+      { label: "Total Cost", value: totalCost },
+      { label: "PnL", value: totalPnL },
+      { label: "Return %", value: returnPercentage },
+    ];
+  }
 
-    // Add or edit a stock in the portfolio
-    setPosition(symbol, quantity, avgCost) {
-        if (!symbol || quantity == null || avgCost == null) {
-            throw new Error("Invalid position data");
-        }
-
-        const portfolio = getUserPortfolio(this.userId);
-
-        const existingIndex = portfolio.findIndex((p) => p.symbol === symbol);
-
-        if (existingIndex > -1) {
-            portfolio[existingIndex] = { symbol, quantity, avgCost };
-        } else {
-            portfolio.push({ symbol, quantity, avgCost });
-        }
-
-        setUserPortfolio(this.userId, portfolio);
-
-        const cachedIndex = this.cache.findIndex((s) => s.symbol === symbol);
-        if (cachedIndex > -1) {
-            this.cache[cachedIndex] = {
-                ...this.cache[cachedIndex],
-                quantity,
-                avgCost,
-            };
-        } else {
-            this.cache.push({ symbol, quantity, avgCost });
-        }
-    }
-
-    // Remove a stock from portfolio and cache
-    removePosition(symbol) {
-        let portfolio = getUserPortfolio(this.userId);
-        portfolio = portfolio.filter((p) => p.symbol !== symbol);
-        setUserPortfolio(this.userId, portfolio);
-
-        this.cache = this.cache.filter((s) => s.symbol !== symbol);
-    }
+  // Refresh portfolio data by reloading all positions and updating the cache
+  async refreshPortfolio() {
+    if (getUserPortfolio(this.userId).length) return this.getPortfolioSummary();
+    await this.loadPortfolio(); // reloads API data for all positions in storage
+    return this.getPortfolioSummary();
+  }
 }
