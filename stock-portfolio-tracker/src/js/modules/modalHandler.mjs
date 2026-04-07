@@ -1,6 +1,6 @@
 import { openModal } from "./modal.mjs";
 
-export function openFormModal(templateFn, onSubmit) {
+export function openFormModal(templateFn, onSubmit, options = {}) {
   openModal((modalEl, closeModal) => {
     // Inject template
     modalEl.innerHTML = templateFn();
@@ -19,5 +19,5 @@ export function openFormModal(templateFn, onSubmit) {
         onSubmit(form.elements, closeModal);
       });
     }
-  });
+  }, options);
 }

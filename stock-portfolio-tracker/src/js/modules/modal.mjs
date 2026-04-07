@@ -3,6 +3,7 @@ let overlay = null;
 let content = null;
 let isInitialized = false;
 let handleEscape = null;
+let onCloseCallback = null;
 
 function initModal() {
   if (isInitialized) return;
@@ -28,8 +29,9 @@ function initModal() {
   isInitialized = true;
 }
 
-export function openModal(renderFn) {
+export function openModal(renderFn, options = {}) {
   initModal();
+  onCloseCallback = options.onClose || null;
 
   // Clear previous content to avoid duplication
   content.innerHTML = "";
@@ -52,6 +54,10 @@ export function openModal(renderFn) {
 
 export function closeModal() {
   if (!isInitialized) return;
+  if (onCloseCallback) {
+    onCloseCallback();
+    onCloseCallback = null; 
+  }
 
   // Hide modal
   modalRoot.classList.add("hidden");

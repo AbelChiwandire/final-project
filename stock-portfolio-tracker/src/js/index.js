@@ -22,7 +22,9 @@ async function initApp() {
 
     // Small delay to let UI settle
     setTimeout(async () => {
-      if (!User.getCurrent()) {
+      const authDismissed = sessionStorage.getItem("authDismissed") === "true";
+
+      if (!User.getCurrent() && !authDismissed) {
         // No user logged in: show sign-in modal
         openAuthModal();
       } else {

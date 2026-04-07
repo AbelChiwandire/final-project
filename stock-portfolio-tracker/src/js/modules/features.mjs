@@ -28,8 +28,8 @@ export function openAddStockModal() {
 
 // ---- Auth Modal ----
 export function openAuthModal() {
-  // Only show if no user is logged in
-  if (User.getCurrent()) return;
+  // Only show if no user is logged in or if modal hasn't been dismissed before in this session
+  if (User.getCurrent() || sessionStorage.getItem("authDismissed") === "true") return;
 
   openFormModal(authTemplate, async (elements, closeModal) => {
     const { username, password, action } = elements;
@@ -58,6 +58,10 @@ export function openAuthModal() {
     closeModal();
     renderPortfolio(portfolioManager.getPortfolio(), "#portfolio-container");
     renderSummary(portfolioManager.getPortfolioSummary(), "#portfolio-summary");
+  },{
+      onClose: () => {
+      sessionStorage.setItem("authDismissed", "true");
+    }
   });
 
   const form = document.querySelector("#modal-root #auth-form");
