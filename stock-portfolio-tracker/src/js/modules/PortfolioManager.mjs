@@ -1,4 +1,4 @@
-import { getUserPortfolio, setUserPortfolio } from "./portfolioStorage.mjs";
+import { getUserPortfolio, setUserPortfolio } from "./storage.mjs";
 import StockData from "./../api/StockData.mjs";
 
 const stockData = new StockData();
@@ -79,7 +79,7 @@ export default class PortfolioManager {
 
   computePositionValues(position) {
     const marketValue = position.currentPrice * position.quantity;
-    const costBasis = position.avgPrice * position.quantity; // or avgPrice for now
+    const costBasis = position.avgCost * position.quantity; 
     return { marketValue, costBasis };
   }
 
@@ -142,7 +142,7 @@ export default class PortfolioManager {
       if (stock.currentPrice == null) continue;
 
       totalValue += stock.currentPrice * stock.quantity;
-      totalCost += stock.avgPrice * stock.quantity;
+      totalCost += stock.avgCost * stock.quantity;
     }
 
     const totalPnL = totalValue - totalCost;

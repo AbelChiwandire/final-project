@@ -28,3 +28,16 @@ export function addStockTemplate() {
     </form>
   `;
 }
+
+export const authTemplate = () => `
+  <h2 class="text-xl font-bold mb-4">Sign In / Sign Up</h2>
+  <form id="auth-form" class="flex flex-col gap-4">
+    <input type="text" name="username" placeholder="Username" required class="border p-2 rounded"/>
+    <input type="password" name="password" placeholder="Password" required class="border p-2 rounded"/>
+    <input type="hidden" name="action" value="signin"/>
+    <div class="flex justify-between">
+      <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Sign In</button>
+      <button type="button" id="switch-action" class="text-blue-500 underline">Sign Up</button>
+    </div>
+  </form>
+`;
