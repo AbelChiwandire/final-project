@@ -3,8 +3,7 @@ import { setUserPortfolio } from "./modules/portfolioStorage.mjs";
 import PortfolioManager from "./modules/PortfolioManager.mjs";
 import { renderPortfolio } from "./UI/renderPortfolio.js";
 import { renderSummary } from "./UI/renderSummary.js";
-
-loadHeaderFooter();
+import { openAddStockModal } from "./modules/features.mjs";
 
 const portfolioManager = new PortfolioManager("test-user");
 
@@ -18,7 +17,7 @@ const mockPortfolio = [
 
 setUserPortfolio(userId, mockPortfolio);
 
-(async function initUI() {
+async function initUI() {
   try {
     const portfolioData = await portfolioManager.loadPortfolio();
 
@@ -29,4 +28,23 @@ setUserPortfolio(userId, mockPortfolio);
   } catch (err) {
     console.error("Error loading portfolio:", err);
   }
-})();
+}
+
+async function main() {
+  try {
+    await loadHeaderFooter();
+
+    const addStockBtn = document.getElementById("add-stock-btn");
+    if (addStockBtn) {
+      addStockBtn.addEventListener("click", openAddStockModal);
+    } else {
+      console.warn("Add stock button not found after header load.");
+    }
+
+    await initUI();
+  } catch (err) {
+    console.error("Error initializing app:", err);
+  }
+}
+
+main();
