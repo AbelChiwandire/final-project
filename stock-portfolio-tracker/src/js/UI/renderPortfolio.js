@@ -16,13 +16,23 @@ export function renderPortfolio(portfolioData, container) {
       const pl = formatNumber(item.percentageChange);
 
       return `
-          <div class="portfolio-card">
+        <div class="portfolio-card" data-symbol="${item.symbol}">
+          
+          <div class="card-content">
             <div class="stock-symbol">${item.symbol}</div>
             <div class="stock-quantity">${item.quantity}</div>
             <div class="stock-price">${price}</div>
             <div class="stock-pl ${plTone}">${pl}%</div>
           </div>
-        `;
+
+          <div class="card-actions">
+            <button data-action="flip">Flip</button>
+            <button data-action="edit">Edit</button>
+            <button data-action="delete">Delete</button>
+          </div>
+
+        </div>
+      `;
     })
     .join("");
 

@@ -6,7 +6,7 @@ const stockData = new StockData();
 export default class PortfolioManager {
   constructor(userId) {
     this.userId = userId;
-    this.cache = [];
+    this.cache = {};
     this.DEFAULT_STOCK_DATA = {
       currentPrice: 0,
       highPrice: 0,
@@ -19,7 +19,6 @@ export default class PortfolioManager {
     };
   }
 
-  // Field-level validation rules
   validateField(key, value) {
     const zeroValidFields = ["change", "percentageChange"];
 
@@ -32,7 +31,6 @@ export default class PortfolioManager {
     return value;
   }
 
-  // Apply validation across all stock fields
   validateStockData(stock) {
     const validated = { ...stock };
 
@@ -43,7 +41,6 @@ export default class PortfolioManager {
     return validated;
   }
 
-  // Load the user's portfolio, fetch current stock data, and cache it
   async loadPortfolio() {
     const portfolio = getUserPortfolio(this.userId);
 
@@ -55,7 +52,7 @@ export default class PortfolioManager {
           ...position,
           ...this.DEFAULT_STOCK_DATA,
           ...data,
-          ...this.computePositionValues({ ...position, ...data }),
+          ...this.computePositionValues(position, data.currentPrice),
           fetchFailed: false,
         };
 
@@ -73,29 +70,44 @@ export default class PortfolioManager {
       }
     });
 
-    this.cache = await Promise.all(fetchPromises);
-    return this.cache;
+    const results = await Promise.all(fetchPromises);
+
+    this.cache = results.reduce((acc, stock) => {
+      acc[stock.symbol] = stock;
+      return acc;
+    }, {});
+
+    return this.getPortfolio();
   }
 
-  computePositionValues(position) {
-    const marketValue = position.currentPrice * position.quantity;
-    const costBasis = position.avgCost * position.quantity; 
-    return { marketValue, costBasis };
+  computePositionValues(position, currentPrice) {
+    const marketValue = currentPrice * position.quantity;
+    const costBasis = position.avgCost * position.quantity;
+    const totalPnL = marketValue - costBasis;
+    
+    return { marketValue, costBasis, totalPnL };
   }
 
-  // Get full cached portfolio
   getPortfolio() {
-    return this.cache;
+    return Object.values(this.cache);
   }
 
-  // Get a single stock's merged data from cache
-  getStock(symbol) {
-    return this.cache.find((s) => s.symbol === symbol) || null;
+  getPosition(symbol) {
+    const cached = this.cache[symbol];
+    if (cached) return cached;
+
+    const portfolio = getUserPortfolio(this.userId);
+    const position = portfolio.find((p) => p.symbol === symbol);
+
+    if (!position) {
+      throw new Error("Position does not exist");
+    }
+
+    return position;
   }
 
-  // Add or edit a stock in the portfolio
-  setPosition(symbol, quantity, avgCost) {
-    if (!symbol || quantity == null || avgCost == null) {
+  setPosition(symbol, quantity, avgCost, companyName) {
+    if (!symbol || quantity == null || avgCost == null || !companyName) {
       throw new Error("Invalid position data");
     }
 
@@ -104,41 +116,45 @@ export default class PortfolioManager {
     const existingIndex = portfolio.findIndex((p) => p.symbol === symbol);
 
     if (existingIndex > -1) {
-      portfolio[existingIndex] = { symbol, quantity, avgCost };
+      portfolio[existingIndex] = { symbol, quantity, avgCost, companyName };
     } else {
-      portfolio.push({ symbol, quantity, avgCost });
+      portfolio.push({ symbol, quantity, avgCost, companyName });
     }
 
     setUserPortfolio(this.userId, portfolio);
 
-    const cachedIndex = this.cache.findIndex((s) => s.symbol === symbol);
-    if (cachedIndex > -1) {
-      this.cache[cachedIndex] = {
-        ...this.cache[cachedIndex],
+    if (this.cache[symbol]) {
+      this.cache[symbol] = {
+        ...this.cache[symbol],
         quantity,
         avgCost,
+        companyName,
       };
     } else {
-      this.cache.push({ symbol, quantity, avgCost });
+      this.cache[symbol] = {
+        symbol,
+        quantity,
+        avgCost,
+        companyName,
+      };
     }
   }
 
-  // Remove a stock from portfolio and cache
   removePosition(symbol) {
     let portfolio = getUserPortfolio(this.userId);
     portfolio = portfolio.filter((p) => p.symbol !== symbol);
     setUserPortfolio(this.userId, portfolio);
 
-    this.cache = this.cache.filter((s) => s.symbol !== symbol);
+    delete this.cache[symbol];
   }
 
   getPortfolioSummary() {
-    const cache = this.cache || [];
+    const cache = this.cache || {};
 
     let totalValue = 0;
     let totalCost = 0;
 
-    for (const stock of cache) {
+    for (const stock of Object.values(cache)) {
       if (stock.currentPrice == null) continue;
 
       totalValue += stock.currentPrice * stock.quantity;
@@ -149,7 +165,6 @@ export default class PortfolioManager {
     const returnPercentage =
       totalCost === 0 ? null : (totalPnL / totalCost) * 100;
 
-    // Return an array, ready for the UI to format
     return [
       { label: "Total Value", value: totalValue },
       { label: "Total Cost", value: totalCost },
@@ -158,10 +173,82 @@ export default class PortfolioManager {
     ];
   }
 
-  // Refresh portfolio data by reloading all positions and updating the cache
   async refreshPortfolio() {
-    if (getUserPortfolio(this.userId).length) return this.getPortfolioSummary();
-    await this.loadPortfolio(); // reloads API data for all positions in storage
+    await this.loadPortfolio();
     return this.getPortfolioSummary();
+  }
+
+  async getStockDetails(symbol) {
+    const portfolio = getUserPortfolio(this.userId);
+    const position = portfolio.find((p) => p.symbol === symbol);
+
+    if (!position) {
+      throw new Error("Position does not exist in user portfolio");
+    }
+
+    let finnhubData = this.cache[symbol];
+
+    if (!finnhubData) {
+      try {
+        const fetched = await stockData.getData(symbol);
+
+        finnhubData = {
+          ...position,
+          ...fetched,
+          fetchFailed: false,
+        };
+
+       // this.cache[symbol] = finnhubData;
+      } catch (err) {
+        console.error(`Finnhub fallback failed for ${symbol}:`, err);
+
+        finnhubData = {
+          ...this.DEFAULT_STOCK_DATA,
+          fetchFailed: true,
+        };
+      }
+    }
+
+    const [profile, metrics, growth, quote, news] = await Promise.all([
+      stockData.getStockProfile(symbol),
+      stockData.getStockMetrics(symbol),
+      stockData.getStockGrowth(symbol),
+      stockData.getStockFMPQuote(symbol),
+      stockData.getStockNews(symbol),
+    ]);
+
+    const computedValues =
+      finnhubData.currentPrice != null
+        ? this.computePositionValues(position, finnhubData.currentPrice)
+        : {
+          marketValue: 0,
+          costBasis: 0,
+          totalPnL: 0,
+        };
+
+    return {
+      symbol,
+      quantity: position.quantity,
+      avgCost: position.avgCost,
+      companyName: position.companyName,
+
+      // Finnhub
+      ...finnhubData,
+
+      // FMP
+      profile,
+      metrics,
+      growth,
+      quote,
+
+      // Derived (from single source of truth)
+      ...computedValues,
+
+      // News
+      news,
+
+      // Meta
+      fetchFailed: finnhubData.fetchFailed || false,
+    };
   }
 }

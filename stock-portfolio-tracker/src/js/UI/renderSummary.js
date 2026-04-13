@@ -9,7 +9,7 @@ export function renderSummary(summaryData, container) {
 
   const formattedData = summaryData.map((item) => {
     const tone = getToneClass(item.label, item.value);
-    const value = formatNumber(item.value);
+    const value = typeof item.value === "string" ? item.value : formatNumber(item.value);
     return { ...item, value, tone };
   });
 

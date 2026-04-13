@@ -119,11 +119,15 @@ export class User {
   }
 
   // Get currently logged-in user
-  static getCurrent() {
-    const userId = getCurrentUser();
-    if (!userId) return null;
+  static getCurrentUserId() {
+    return getCurrentUser();
+  }
 
+  // Get currently logged-in user object
+  static getCurrentUser() {
+    const id = getCurrentUser();
+    if (!id) return null;
     const users = getUsers();
-    return users[userId] || null;
+    return users[id] || null;
   }
 }

@@ -1,36 +1,49 @@
 import PortfolioManager from "../modules/PortfolioManager.mjs";
-import { renderPortfolio } from "../UI/renderPortfolio.js";
-import { renderSummary } from "../UI/renderSummary.js";
 import { openFormModal } from "./modalHandler.mjs";
 import { addStockTemplate, authTemplate } from "../UI/templates.mjs";
 import { User } from "../modules/auth.mjs";
+import { getUserTheme, setUserTheme } from "./themeStorage.mjs";
+import { settingsTemplate } from "../UI/templates.mjs";
+import { openModal } from "./modal.mjs";
 
-const portfolioManager = new PortfolioManager(User.getCurrent()?.id || null);
+let portfolioManager = new PortfolioManager(User.getCurrentUserId() || null);
+
+export function setPortfolioManager(manager) {
+  portfolioManager = manager;
+}
 
 // ---- Portfolio Modal ----
-export function openAddStockModal() {
+export function openAddStockModal(position = null) {
   openFormModal(addStockTemplate, async (elements, closeModal) => {
-    const { symbol, shares, avgCost } = elements;
+    const { symbol, shares, avgCost, companyName } = elements;
 
     portfolioManager.setPosition(
       symbol.value.toUpperCase(),
       Number(shares.value),
       Number(avgCost.value),
+      companyName.value,
     );
 
     await portfolioManager.loadPortfolio();
 
     closeModal();
-    renderPortfolio(portfolioManager.getPortfolio(), "#portfolio-container");
-    renderSummary(portfolioManager.getPortfolioSummary(), "#portfolio-summary");
+    document.dispatchEvent(new CustomEvent("portfolioUpdated"));
+  },{
+    onInit: (elements) => {
+      if (position) {
+        elements.symbol.value = position.symbol;
+        elements.shares.value = position.quantity;
+        elements.avgCost.value = position.avgCost;
+        elements.companyName.value = position.companyName;
+        elements.symbol.disabled = true;
+        elements.companyName.disabled = true;
+      }
+    },
   });
 }
 
 // ---- Auth Modal ----
 export function openAuthModal() {
-  // Only show if no user is logged in or if modal hasn't been dismissed before in this session
-  if (User.getCurrent() || sessionStorage.getItem("authDismissed") === "true") return;
-
   openFormModal(authTemplate, async (elements, closeModal) => {
     const { username, password, action } = elements;
 
@@ -54,14 +67,9 @@ export function openAuthModal() {
 
     await portfolioManager.loadPortfolio();
 
-    // Close modal and render portfolio
+    // Close modal and re-render app state
     closeModal();
-    renderPortfolio(portfolioManager.getPortfolio(), "#portfolio-container");
-    renderSummary(portfolioManager.getPortfolioSummary(), "#portfolio-summary");
-  },{
-      onClose: () => {
-      sessionStorage.setItem("authDismissed", "true");
-    }
+    document.dispatchEvent(new CustomEvent("portfolioUpdated"));
   });
 
   const form = document.querySelector("#modal-root #auth-form");
@@ -81,5 +89,46 @@ export function openAuthModal() {
       submitBtn.textContent = "Sign In";
       switchBtn.textContent = "Sign Up";
     }
+  });
+}
+
+export function openSettingsModal() {
+  openModal((root, closeModal) => {
+    const user = User.getCurrentUser();
+    if (!user) return;
+
+    const theme = getUserTheme(user.id);
+    const formattedUsername = user.username.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
+
+    root.innerHTML = settingsTemplate({
+      username: formattedUsername,
+      theme,
+    });
+
+    root
+      .querySelector(".settings-theme-select")
+      .addEventListener("change", (e) => {
+        const newTheme = e.target.value;
+
+        setUserTheme(user.id, newTheme);
+
+        document.documentElement.setAttribute("data-theme", newTheme);
+      });
+
+    root
+      .querySelector(".settings-signout-btn")
+      .addEventListener("click", () => {
+        User.logout();
+
+        portfolioManager.userId = null;
+        portfolioManager.cache = {};
+
+        closeModal();
+
+        // reset UI theme immediately (safe fallback)
+        document.documentElement.setAttribute("data-theme", "light");
+
+        document.dispatchEvent(new CustomEvent("portfolioUpdated"));
+      });
   });
 }

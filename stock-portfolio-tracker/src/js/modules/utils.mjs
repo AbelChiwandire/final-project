@@ -86,5 +86,29 @@ export function getToneClass(label, value) {
 }
 
 export function formatNumber(value) {
-  return typeof value === "number" && !isNaN(value) ? value.toFixed(2) : "0.00";
+  const number = Number(value);
+  return Number.isFinite(number) ? number.toFixed(2) : "0.00";
+}
+
+export function formatPercent(value) {
+  const number = Number(value);
+  return Number.isFinite(number) ? `${(number * 100).toFixed(2)}%` : "—";
+}
+
+export function formatTimeAgo(timestamp) {
+  if (!timestamp) return "";
+
+  const now = Date.now();
+  const time = timestamp * 1000;
+  const diff = now - time;
+
+  const seconds = Math.floor(diff / 1000);
+  const minutes = Math.floor(diff / (1000 * 60));
+  const hours = Math.floor(diff / (1000 * 60 * 60));
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+
+  if (seconds < 60) return `${seconds}s ago`;
+  if (minutes < 60) return `${minutes}m ago`;
+  if (hours < 24) return `${hours}h ago`;
+  return `${days}d ago`;
 }

@@ -4,15 +4,54 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Stock Portfolio Tracker | Stock Details</title>
+    <link rel="stylesheet" href="../css/style.css" />
     <script type="module" src="../js/details.js"></script>
   </head>
   <body>
     <header id="header"></header>
 
     <main>
-      <div id="stock-details-container"></div>
-      <section id="stock-metrics"></section>
-      <section id="stock-news"></section>
+      <div id="stock-profile-container"></div>
+
+      <section id="metrics-container">
+        <h2>Key Metrics</h2>
+        <div id="stock-metrics"></div>
+      </section>
+
+      <section id="analytics-container">
+        <h2>Analytics</h2>
+        <div id="stock-analytics"></div>
+      </section>
+
+      <section id="news-container">
+        <h2>Related News</h2>
+        <div id="stock-news-container"></div>
+      </section>
+
+      <template id="news-card-template">
+        <a class="news-card" target="_blank" rel="noopener noreferrer">
+          
+          <div class="news-card__main">
+
+            <div class="news-card__image-wrapper">
+              <img class="news-card__image" alt="News image" />
+            </div>
+
+            <div class="news-card__content">
+              <h3 class="news-card__headline"></h3>
+
+              <div class="news-card__meta">
+                <span class="news-card__source"></span>
+                <span class="news-card__timestamp"></span>
+              </div>
+            </div>
+
+          </div>
+
+          <p class="news-card__summary"></p>
+
+        </a>
+      </template>
     </main>
 
     <footer id="footer"></footer>
