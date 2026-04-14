@@ -74,14 +74,14 @@ export function getToneClass(label, value) {
     value > 0 &&
     (label === "PnL" || label === "Return %" || label === "Change")
   ) {
-    return "text-green-600";
+    return "tone-positive";
   } else if (
     value < 0 &&
     (label === "PnL" || label === "Return %" || label === "Change")
   ) {
-    return "text-red-600";
+    return "tone-negative";
   } else {
-    return "text-gray-500";
+    return "tone-neutral";
   }
 }
 

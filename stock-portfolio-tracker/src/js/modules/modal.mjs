@@ -1,73 +1,100 @@
 let modalRoot = null;
-let overlay = null;
-let content = null;
+let modalOverlay = null;
+let modalPanel = null;
 let isInitialized = false;
 let handleEscape = null;
 let onCloseCallback = null;
 
+// -----------------------------
+// INIT
+// -----------------------------
 function initModal() {
   if (isInitialized) return;
 
   modalRoot = document.createElement("div");
   modalRoot.id = "modal-root";
-  modalRoot.className = "fixed inset-0 hidden z-50";
+  modalRoot.className = "modal hidden";
 
-  overlay = document.createElement("div");
-  overlay.className = "absolute inset-0 bg-black bg-opacity-50";
+  modalOverlay = document.createElement("div");
+  modalOverlay.className = "modal-overlay";
 
-  content = document.createElement("div");
-  content.className =
-    "relative z-10 mx-auto mt-20 bg-white p-6 rounded shadow-lg w-96";
+  modalPanel = document.createElement("div");
+  modalPanel.className = "modal-panel";
 
-  modalRoot.appendChild(overlay);
-  modalRoot.appendChild(content);
+  modalRoot.appendChild(modalOverlay);
+  modalRoot.appendChild(modalPanel);
   document.body.appendChild(modalRoot);
-
-  // Overlay click closes modal
-  overlay.addEventListener("click", closeModal);
 
   isInitialized = true;
 }
 
+// -----------------------------
+// OPEN
+// -----------------------------
 export function openModal(renderFn, options = {}) {
   initModal();
   onCloseCallback = options.onClose || null;
 
-  // Clear previous content to avoid duplication
-  content.innerHTML = "";
+  // clear content
+  modalPanel.innerHTML = "";
 
-  // Show modal
+  // render content
+  renderFn(modalPanel, closeModal);
+
+  // show modal
   modalRoot.classList.remove("hidden");
 
-  // Inject content and pass control
-  renderFn(content, closeModal);
+  requestAnimationFrame(() => {
+    modalRoot.classList.add("modal-open");
+    modalRoot.classList.remove("modal-closing");
 
-  // Escape key handler
+    // attach overlay click AFTER open (prevents instant close)
+    modalOverlay.addEventListener("click", handleOverlayClick);
+  });
+
+  // Escape key
   handleEscape = (e) => {
-    if (e.key === "Escape") {
-      closeModal();
-    }
+    if (e.key === "Escape") closeModal();
   };
 
   document.addEventListener("keydown", handleEscape);
 }
 
+// -----------------------------
+// CLOSE
+// -----------------------------
 export function closeModal() {
   if (!isInitialized) return;
+
   if (onCloseCallback) {
     onCloseCallback();
-    onCloseCallback = null; 
+    onCloseCallback = null;
   }
 
-  // Hide modal
-  modalRoot.classList.add("hidden");
+  modalRoot.classList.remove("modal-open");
+  modalRoot.classList.add("modal-closing");
 
-  // Clear content
-  content.innerHTML = "";
+  document.removeEventListener("keydown", handleEscape);
+  modalOverlay.removeEventListener("click", handleOverlayClick);
 
-  // Remove escape listener to prevent stacking
-  if (handleEscape) {
-    document.removeEventListener("keydown", handleEscape);
-    handleEscape = null;
+  const handleTransitionEnd = (e) => {
+    if (e.target !== modalRoot) return;
+
+    modalRoot.classList.add("hidden");
+    modalRoot.classList.remove("modal-closing");
+    modalPanel.innerHTML = "";
+
+    modalRoot.removeEventListener("transitionend", handleTransitionEnd);
+  };
+
+  modalRoot.addEventListener("transitionend", handleTransitionEnd);
+}
+
+// -----------------------------
+// OVERLAY CLICK HANDLER
+// -----------------------------
+function handleOverlayClick(e) {
+  if (e.target === modalOverlay) {
+    closeModal();
   }
 }

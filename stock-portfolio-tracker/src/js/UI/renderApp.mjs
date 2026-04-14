@@ -5,62 +5,88 @@ import { getFallbackTemplate } from "./templates.mjs";
 import { getUserTheme } from "../modules/themeStorage.mjs";
 
 export function renderApp(portfolioManager) {
-	const user = portfolioManager.userId;
-	if (user) {
-		const theme = getUserTheme(user);
-		document.documentElement.setAttribute("data-theme", theme);
-	} else {
-		document.documentElement.setAttribute("data-theme", "light");
-	}
-  const portfolio = portfolioManager.getPortfolio();
+  const user = portfolioManager.userId;
 
   const fallbackRoot = document.getElementById("fallback-root");
-  const summaryEl = document.getElementById("portfolio-summary");
   const containerEl = document.getElementById("portfolio-container");
 
-  // Always render summary first (single source of truth)
+  const portfolio = portfolioManager.getPortfolio();
   const summary = portfolioManager.getPortfolioSummary();
+
+  // -----------------------------
+  // Theme handling
+  // -----------------------------
+  if (user) {
+    const theme = getUserTheme(user);
+    document.documentElement.classList.toggle("dark", theme === "dark");
+  } else {
+    document.documentElement.classList.remove("dark");
+  }
+
+  // -----------------------------
+  // Always render summary
+  // -----------------------------
   renderSummary(summary, "#portfolio-summary");
 
-  const showFallback = (state) => {
-    summaryEl.style.display = "block";
-    containerEl.style.display = "none";
-    fallbackRoot.style.display = "block";
+  // -----------------------------
+  // Decide UI state
+  // -----------------------------
+  let stateType;
 
+  if (!user) {
+    stateType = "signin";
+  } else if (!portfolio || portfolio.length === 0) {
+    stateType = "empty";
+  } else {
+    stateType = "portfolio";
+  }
+
+  // -----------------------------
+  // Render fallback
+  // -----------------------------
+  const renderFallback = (state) => {
+    containerEl.innerHTML = "";
+    containerEl.classList.add("hidden");
+
+    fallbackRoot.classList.remove("hidden");
     fallbackRoot.innerHTML = getFallbackTemplate(state);
 
     if (state === "signin") {
-      document
-        .getElementById("fallback-signin-btn")
-        .addEventListener("click", openAuthModal);
+      const btn = document.getElementById("fallback-signin-btn");
+      if (btn) btn.addEventListener("click", openAuthModal);
       return;
     }
 
-    document
-      .getElementById("fallback-add-btn")
-      .addEventListener("click", () => openAddStockModal());
+    const btn = document.getElementById("fallback-add-btn");
+    if (btn) btn.addEventListener("click", openAddStockModal);
   };
 
-  const showPortfolio = () => {
-    fallbackRoot.style.display = "none";
-    summaryEl.style.display = "block";
-    containerEl.style.display = "block";
+  // -----------------------------
+  // Render portfolio
+  // -----------------------------
+  const renderPortfolioState = () => {
+    fallbackRoot.innerHTML = "";
+    fallbackRoot.classList.add("hidden");
+
+    containerEl.classList.remove("hidden");
 
     renderPortfolio(portfolio, "#portfolio-container");
   };
 
-  // CASE 1: no user
-  if (!user) {
-    showFallback("signin");
-    return;
-  }
+  // -----------------------------
+  // Execute render
+  // -----------------------------
+  switch (stateType) {
+    case "signin":
+      renderFallback("signin");
+      break;
 
-  // CASE 2: empty portfolio
-  if (!portfolio || portfolio.length === 0) {
-    showFallback("empty");
-    return;
-  }
+    case "empty":
+      renderFallback("empty");
+      break;
 
-  // CASE 3: full portfolio
-  showPortfolio();
+    case "portfolio":
+      renderPortfolioState();
+      break;
+  }
 }

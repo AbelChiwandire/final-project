@@ -82,12 +82,12 @@ export function openAuthModal() {
   switchBtn.addEventListener("click", () => {
     if (actionInput.value === "signin") {
       actionInput.value = "signup";
-      submitBtn.textContent = "Sign Up";
-      switchBtn.textContent = "Sign In";
+      submitBtn.textContent = "Create Account";
+      switchBtn.innerHTML = `Already have an account? <span class="modal-link-text">Sign In</span>`;
     } else {
       actionInput.value = "signin";
-      submitBtn.textContent = "Sign In";
-      switchBtn.textContent = "Sign Up";
+      submitBtn.textContent = "Log In";
+      switchBtn.innerHTML = `Do not have an account? <span class="modal-link-text">Sign Up</span>`;
     }
   });
 }
@@ -105,6 +105,11 @@ export function openSettingsModal() {
       theme,
     });
 
+    const closeBtn = root.querySelector(".modal-close");
+    if (closeBtn) {
+      closeBtn.addEventListener("click", closeModal);
+    }
+
     root
       .querySelector(".settings-theme-select")
       .addEventListener("change", (e) => {
@@ -112,7 +117,7 @@ export function openSettingsModal() {
 
         setUserTheme(user.id, newTheme);
 
-        document.documentElement.setAttribute("data-theme", newTheme);
+        document.documentElement.classList.toggle("dark", newTheme === "dark");
       });
 
     root
