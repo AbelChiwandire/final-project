@@ -104,6 +104,9 @@ footer {
 .px-md { padding-left: 12px; padding-right: 12px; }
 .py-sm { padding-top: 6px; padding-bottom: 6px; }
 
+.mb-md { margin-bottom: 12px; }
+.margin-top { margin-top: 16px; }
+
 /* =========================
    TEXT
 ========================= */
@@ -247,7 +250,7 @@ button svg {
    HEADER 
 ========================= */
 
-#header {
+.header {
   background: hsl(var(--card));
   border-bottom: 1px solid hsl(var(--border));
 
@@ -256,7 +259,7 @@ button svg {
   z-index: 50;
 }
 
-#header > div {
+.header > div {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -264,7 +267,7 @@ button svg {
   padding: 10px 16px;
 }
 
-#header span {
+.header span {
   font-weight: 600;
 }
 
@@ -272,21 +275,27 @@ button svg {
    SUMMARY CARDS
 ========================= */
 
-#portfolio-summary {
+.portfolio-summary {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 12px;
   margin-top: 16px;
 }
 
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 12px;
+}
+
 @media (max-width: 900px) {
-  #portfolio-summary {
+  .portfolio-summary {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
 @media (max-width: 500px) {
-  #portfolio-summary {
+  .portfolio-summary {
     grid-template-columns: 1fr;
   }
 }
@@ -695,4 +704,172 @@ body.modal-open {
 
 .fallback-btn {
   margin-top: 10px;
+}
+
+/* =========================
+   STOCK DETAILS HEADER
+========================= */
+
+.details-back-btn,
+.details-refresh-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  padding: 6px 10px;
+  border-radius: var(--radius);
+  color: hsl(var(--text));
+}
+
+.details-back-btn:hover,
+.details-refresh-btn:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.dark .details-back-btn:hover,
+.dark .details-refresh-btn:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.details-symbol {
+  font-weight: 600;
+  color: hsl(var(--text));
+}
+
+/* =========================
+   STOCK PROFILE 
+========================= */
+
+.profile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+}
+
+.profile-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.profile-logo {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+.profile-website {
+  color: hsl(var(--primary))
+}
+
+.profile-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.profile-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.profile-sector {
+  font-size: 0.85rem;
+  opacity: 0.7;
+}
+
+.profile-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.profile-price {
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.profile-change {
+  font-size: 0.9rem;
+}
+
+/* =========================
+   RELATED NEWS
+========================= */
+#stock-news-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.news-card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  border-radius: var(--radius);
+
+  padding: 12px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.news-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+}
+
+.news-card__main {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.news-card__image-wrapper {
+  width: 90px;
+  height: 70px;
+  flex-shrink: 0;
+
+  border-radius: 8px;
+  overflow: hidden;
+  background: hsl(var(--muted));
+}
+
+.news-card__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.news-card__content {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.news-card__headline {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.news-card__meta {
+  display: flex;
+  gap: 8px;
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.news-card__summary {
+  margin-top: 10px;
+  font-size: 13px;
+  line-height: 1.4;
+  opacity: 0.85;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }

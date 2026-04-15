@@ -1,4 +1,13 @@
-import { formatTimeAgo } from "../modules/utils.mjs";
+import { formatTimeAgo, applyImageFallback } from "../modules/utils.mjs";
+
+function getFallbackLabel(source) {
+  if (!source) return "N/A";
+
+  return source
+    .replace(/[^a-zA-Z]/g, "")   // remove symbols/spaces
+    .slice(0, 3)                 // take first 3 letters
+    .toUpperCase() || "N/A";
+}
 
 export function renderStockNews(news, containerEl) {
   const template = document.getElementById("news-card-template");
@@ -25,24 +34,22 @@ export function renderStockNews(news, containerEl) {
     // Anchor
     anchor.href = article.url;
 
-    // Image
-    if (article.image) {
-      img.src = article.image;
-      img.alt = article.headline;
-    } else {
-      img.remove();
-    }
+    // Image (never remove)
+    img.src = article.image || "";
+    img.alt = article.headline || "News image";
+
+    applyImageFallback(img, getFallbackLabel(article.source));
 
     // Text content
     headline.textContent = article.headline;
-    source.textContent = article.source;
+    source.textContent = article.source || "Unknown";
     timestamp.textContent = formatTimeAgo(article.datetime);
 
     // Summary
     if (article.summary) {
       summary.textContent = article.summary;
     } else {
-      summary.remove();
+      summary.textContent = "";
     }
 
     fragment.appendChild(clone);

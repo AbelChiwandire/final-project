@@ -1,67 +1,88 @@
 import { renderSummary } from "./renderSummary.js";
+import {
+  formatNumber,
+  formatPercent,
+  displayValue,
+  applyImageFallback,
+  getToneClass
+} from "../modules/utils.mjs";
 
 export function renderStockProfile(data, containerEl) {
   containerEl.innerHTML = "";
+
   const wrapper = document.createElement("div");
+  wrapper.className = "profile";
 
-  const companyInfo = document.createElement("div");
+  wrapper.innerHTML = `
+    <div class="profile-header page-container page-section">
+      
+      <div class="profile-left">
+        <img class="profile-logo" src="${data.profile.logo || ""}" />
 
-  const logo = document.createElement("img");
-  logo.src = data.profile.logo;
+        <div class="profile-text">
+          <div class="profile-title-row">
+            <h1>${displayValue(data.symbol)}</h1>
+            <span class="profile-name">
+              ${displayValue(data.profile.companyName)}
+            </span>
+            <span class="profile-sector">
+              ${displayValue(data.profile.sector)}
+            </span>
+          </div>
+          <a class="profile-website" href="${data.profile.website || "#"}" target="_blank">
+            ${displayValue(data.profile.website)}
+          </a>
+        </div>
+      </div>
 
-  const infoBlock = document.createElement("div");
+      <div class="profile-right">
+        <div class="profile-price">
+          $${formatNumber(data.currentPrice, { allowZero: false })}
+        </div>
+        <div class="profile-change"></div>
+      </div>
 
-  const identity = document.createElement("div");
+    </div>
 
-  const h1 = document.createElement("h1");
-  h1.textContent = data.symbol;
+    <div class="profile-summary portfolio-summary"></div>
+  `;
 
-  const name = document.createElement("span");
-  name.textContent = data.profile.companyName;
+  // --- Image fallback ---
+  const logo = wrapper.querySelector(".profile-logo");
+  applyImageFallback(logo, data.symbol);
 
-  const sector = document.createElement("span");
-  sector.textContent = data.profile.sector;
+  // --- Tone + Change handling ---
+  const changeEl = wrapper.querySelector(".profile-change");
 
-  identity.appendChild(h1);
-  identity.appendChild(name);
-  identity.appendChild(sector);
+  let toneClass = "tone-neutral";
 
-  const link = document.createElement("a");
-  link.href = data.profile.website;
-  link.textContent = data.profile.website;
+  if (data.change != null) {
+    toneClass = getToneClass("Change", data.change);
+  }
 
-  infoBlock.appendChild(identity);
-  infoBlock.appendChild(link);
+  changeEl.classList.add(toneClass);
 
-  const priceBlock = document.createElement("div");
+  changeEl.textContent = `
+    ${formatNumber(data.change)} (${formatPercent(data.percentageChange)})
+  `;
 
-  const price = document.createElement("div");
-  price.textContent = data.currentPrice;
-
-  const change = document.createElement("div");
-  change.textContent =
-    data.change + " (" + data.percentageChange + ")";
-
-  priceBlock.appendChild(price);
-  priceBlock.appendChild(change);
-
-  companyInfo.appendChild(logo);
-  companyInfo.appendChild(infoBlock);
-  companyInfo.appendChild(priceBlock);
-
-  const summaryContainer = document.createElement("div");
+  // --- Summary ---
+  const summaryContainer = wrapper.querySelector(".profile-summary");
 
   const summaryData = [
     { label: "Shares Held", value: data.quantity },
     { label: "Avg Cost", value: data.avgCost },
     { label: "Market Value", value: data.marketValue },
-    { label: "Total P&L", value: data.marketValue - data.costBasis }
+    {
+      label: "Total P&L",
+      value:
+        data.marketValue != null && data.costBasis != null
+          ? data.marketValue - data.costBasis
+          : null
+    }
   ];
 
   renderSummary(summaryData, summaryContainer);
-
-  wrapper.appendChild(companyInfo);
-  wrapper.appendChild(summaryContainer);
 
   containerEl.appendChild(wrapper);
 }

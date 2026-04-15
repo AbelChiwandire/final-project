@@ -85,14 +85,33 @@ export function getToneClass(label, value) {
   }
 }
 
-export function formatNumber(value) {
+export const EMPTY_DISPLAY = "—";
+
+export function formatNumber(value, options = {}) {
+  const { allowZero = true, decimals = 2 } = options;
+  if (value == null || value === "") return EMPTY_DISPLAY;
+
   const number = Number(value);
-  return Number.isFinite(number) ? number.toFixed(2) : "0.00";
+  if (!Number.isFinite(number)) return EMPTY_DISPLAY;
+  if (number === 0 && !allowZero) return EMPTY_DISPLAY;
+
+  return number.toFixed(decimals);
 }
 
-export function formatPercent(value) {
+export function formatPercent(value, options = {}) {
+  const { allowZero = true, decimals = 2 } = options;
+  if (value == null || value === "") return EMPTY_DISPLAY;
+
   const number = Number(value);
-  return Number.isFinite(number) ? `${(number * 100).toFixed(2)}%` : "—";
+  if (!Number.isFinite(number)) return EMPTY_DISPLAY;
+  if (number === 0 && !allowZero) return EMPTY_DISPLAY;
+
+  return `${(number * 100).toFixed(decimals)}%`;
+}
+
+export function displayValue(value) {
+  if (value == null || value === "") return EMPTY_DISPLAY;
+  return String(value);
 }
 
 export function formatTimeAgo(timestamp) {
@@ -111,4 +130,22 @@ export function formatTimeAgo(timestamp) {
   if (minutes < 60) return `${minutes}m ago`;
   if (hours < 24) return `${hours}h ago`;
   return `${days}d ago`;
+}
+
+export function applyImageFallback(imgEl, fallbackText = "N/A") {
+  imgEl.onerror = () => {
+    imgEl.onerror = null;
+
+    const svg = `
+      <svg xmlns='http://www.w3.org/2000/svg' width='40' height='40'>
+        <rect width='100%' height='100%' fill='#2a2a2a'/>
+        <text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle'
+          font-size='12' fill='#888' font-family='Arial'>
+          ${fallbackText}
+        </text>
+      </svg>
+    `;
+
+    imgEl.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+  };
 }

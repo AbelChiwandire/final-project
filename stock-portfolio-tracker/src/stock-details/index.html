@@ -8,28 +8,28 @@
     <script type="module" src="../js/details.js"></script>
   </head>
   <body>
-    <header id="header"></header>
+    <header id="details-header-root" class="header"></header>
 
     <main>
-      <div id="stock-profile-container"></div>
+      <div id="stock-profile-container" class="page-container page-section"></div>
 
-      <section id="metrics-container">
-        <h2>Key Metrics</h2>
-        <div id="stock-metrics"></div>
+      <section id="metrics-container" class="page-container page-section">
+        <h2 class="mb-md">Key Metrics</h2>
+        <div id="stock-metrics" class="portfolio-summary"></div>
       </section>
 
-      <section id="analytics-container">
-        <h2>Analytics</h2>
-        <div id="stock-analytics"></div>
+      <section id="analytics-container" class="page-container page-section">
+        <h2 class="mb-md">Analytics</h2>
+        <div id="stock-analytics" class="grid-3"></div>
       </section>
 
-      <section id="news-container">
-        <h2>Related News</h2>
+      <section id="news-container" class="page-container page-section">
+        <h2 class="mb-md">Related News</h2>
         <div id="stock-news-container"></div>
       </section>
 
       <template id="news-card-template">
-        <a class="news-card" target="_blank" rel="noopener noreferrer">
+        <a class="news-card card-content" target="_blank" rel="noopener noreferrer">
           
           <div class="news-card__main">
 
