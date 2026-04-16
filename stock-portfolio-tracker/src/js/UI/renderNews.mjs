@@ -4,8 +4,8 @@ function getFallbackLabel(source) {
   if (!source) return "N/A";
 
   return source
-    .replace(/[^a-zA-Z]/g, "")   // remove symbols/spaces
-    .slice(0, 3)                 // take first 3 letters
+    .replace(/[^a-zA-Z]/g, "")
+    .slice(0, 3)
     .toUpperCase() || "N/A";
 }
 
@@ -32,25 +32,29 @@ export function renderStockNews(news, containerEl) {
     const summary = clone.querySelector(".news-card__summary");
 
     // Anchor
-    anchor.href = article.url;
+    anchor.href = article?.url || "#";
 
-    // Image (never remove)
-    img.src = article.image || "";
-    img.alt = article.headline || "News image";
+    // Image (safe + fallback-driven, no broken src)
+    if (article?.image) {
+      img.src = article.image;
+    } else {
+      img.removeAttribute("src");
+    }
 
-    applyImageFallback(img, getFallbackLabel(article.source));
+    img.alt = article?.headline || "News image";
+    applyImageFallback(img, getFallbackLabel(article?.source));
 
     // Text content
-    headline.textContent = article.headline;
-    source.textContent = article.source || "Unknown";
-    timestamp.textContent = formatTimeAgo(article.datetime);
+    headline.textContent = article?.headline || "No headline";
+    source.textContent = article?.source || "Unknown";
+
+    // Timestamp safety
+    timestamp.textContent = article?.datetime
+      ? formatTimeAgo(article.datetime)
+      : "";
 
     // Summary
-    if (article.summary) {
-      summary.textContent = article.summary;
-    } else {
-      summary.textContent = "";
-    }
+    summary.textContent = article?.summary || "";
 
     fragment.appendChild(clone);
   });

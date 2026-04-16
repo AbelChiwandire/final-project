@@ -4,6 +4,15 @@ import { renderSummary } from "./renderSummary.js";
 import { getFallbackTemplate } from "./templates.mjs";
 import { getUserTheme } from "../modules/themeStorage.mjs";
 
+function updateLastUpdated() {
+  const el = document.getElementById("last-updated");
+  if (el) {
+    const now = new Date();
+    const formatted = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    el.textContent = `Updated: ${formatted}`;
+  }
+}
+
 export function renderApp(portfolioManager) {
   const user = portfolioManager.userId;
 
@@ -58,7 +67,8 @@ export function renderApp(portfolioManager) {
     }
 
     const btn = document.getElementById("fallback-add-btn");
-    if (btn) btn.addEventListener("click", openAddStockModal);
+    if (btn) btn.addEventListener("click", () =>
+      openAddStockModal(null));
   };
 
   // -----------------------------
@@ -89,4 +99,6 @@ export function renderApp(portfolioManager) {
       renderPortfolioState();
       break;
   }
+
+  updateLastUpdated();
 }

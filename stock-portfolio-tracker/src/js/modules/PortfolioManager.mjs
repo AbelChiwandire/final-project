@@ -7,6 +7,9 @@ export default class PortfolioManager {
   constructor(userId) {
     this.userId = userId;
     this.cache = {};
+    this.hasLoaded = false;
+    this.isRefreshing = false;
+    this.detailsCache = {};
     this.DEFAULT_STOCK_DATA = {
       currentPrice: 0,
       highPrice: 0,
@@ -41,12 +44,17 @@ export default class PortfolioManager {
     return validated;
   }
 
-  async loadPortfolio() {
+  async loadPortfolio(force = false) {
+    if (this.hasLoaded && !force) {
+      return this.getPortfolio();
+    }
+
     const portfolio = getUserPortfolio(this.userId);
 
     const fetchPromises = portfolio.map(async (position) => {
       try {
-        const data = await stockData.getData(position.symbol);
+        const response = await stockData.getData(position.symbol);
+        const data = response?.data || response;
 
         const merged = {
           ...position,
@@ -77,6 +85,8 @@ export default class PortfolioManager {
       return acc;
     }, {});
 
+    this.hasLoaded = true;
+    console.log("Portfolio loaded with data:", this.cache);
     return this.getPortfolio();
   }
 
@@ -174,19 +184,39 @@ export default class PortfolioManager {
       totalCost === 0 ? null : (totalPnL / totalCost) * 100;
 
     return [
-      { label: "Total Value", value: totalValue },
-      { label: "Total Cost", value: totalCost },
-      { label: "PnL", value: totalPnL },
-      { label: "Return %", value: returnPercentage },
+      { label: "Total Value", value: totalValue, type: "currency" },
+      { label: "Total Cost", value: totalCost, type: "currency" },
+      { label: "Total PnL", value: totalPnL, type: "currency" },
+      { label: "Return %", value: returnPercentage, type: "percent" }
     ];
   }
 
   async refreshPortfolio() {
-    await this.loadPortfolio();
-    return this.getPortfolioSummary();
+    if (this.isRefreshing) return;
+
+    this.isRefreshing = true;
+
+    try {
+      await this.loadPortfolio(true);
+
+      // clear details cache so FMP refetches
+      this.detailsCache = {};
+
+      return this.getPortfolioSummary();
+    } finally {
+      this.isRefreshing = false;
+    }
   }
 
-  async getStockDetails(symbol) {
+  getRefreshState() {
+    return this.isRefreshing;
+  }
+
+  async getStockDetails(symbol, force = false) {
+    if (this.detailsCache[symbol] && !force) {
+      return this.detailsCache[symbol];
+    }
+
     const portfolio = getUserPortfolio(this.userId);
     const position = portfolio.find((p) => p.symbol === symbol);
 
@@ -196,176 +226,93 @@ export default class PortfolioManager {
 
     let finnhubData = this.cache[symbol];
 
-    if (!finnhubData) {
+    if (!finnhubData || force) {
       try {
         const fetched = await stockData.getData(symbol);
 
         finnhubData = {
           ...position,
-          ...fetched,
+          ...this.DEFAULT_STOCK_DATA,
+          ...(fetched?.data || {}), 
           fetchFailed: false,
         };
 
-       // this.cache[symbol] = finnhubData;
+        this.cache[symbol] = finnhubData;
       } catch (err) {
         console.error(`Finnhub fallback failed for ${symbol}:`, err);
 
         finnhubData = {
+          ...position,
           ...this.DEFAULT_STOCK_DATA,
           fetchFailed: true,
         };
       }
     }
 
-    const [profile, metrics, growth, quote, news] = await Promise.all([
-      stockData.getStockProfile(symbol),
-      stockData.getStockMetrics(symbol),
-      stockData.getStockGrowth(symbol),
-      stockData.getStockFMPQuote(symbol),
-      stockData.getStockNews(symbol),
-    ]);
+    // Ensure FMP cache container exists
+    if (!this.fmpCache) {
+      this.fmpCache = {};
+    }
+
+    if (!this.fmpCache[symbol] || force) {
+      const safeFetch = async (fn, fallback) => {
+        try {
+          const result = await fn();
+          return result?.data ?? fallback; 
+        } catch {
+          return fallback;
+        }
+      };
+
+      const [profile, metrics, growth, quote, news] = await Promise.all([
+        safeFetch(() => stockData.getStockProfile(symbol), {}),
+        safeFetch(() => stockData.getStockMetrics(symbol), {}),
+        safeFetch(() => stockData.getStockGrowth(symbol), {}),
+        safeFetch(() => stockData.getStockFMPQuote(symbol), {}),
+        safeFetch(() => stockData.getStockNews(symbol), []),
+      ]);
+
+      this.fmpCache[symbol] = {
+        profile,
+        metrics,
+        growth,
+        quote,
+        news,
+      };
+    }
+
+    const { profile, metrics, growth, quote, news } = this.fmpCache[symbol];
 
     const computedValues =
       finnhubData.currentPrice != null
         ? this.computePositionValues(position, finnhubData.currentPrice)
         : {
-          marketValue: null,
-          costBasis: null,
-          totalPnL: null,
-        };
+            marketValue: null,
+            costBasis: null,
+            totalPnL: null,
+          };
 
-    return {
+    const result = {
       symbol,
       quantity: position.quantity,
       avgCost: position.avgCost,
       companyName: position.companyName,
 
-      // Finnhub
-      ...finnhubData,
+      ...this.validateStockData(finnhubData),
 
-      // FMP
       profile,
       metrics,
       growth,
       quote,
 
-      // Derived (from single source of truth)
       ...computedValues,
 
-      // News
       news,
-
-      // Meta
       fetchFailed: finnhubData.fetchFailed || false,
     };
-  }
 
-  getAAPL() {
-    const appleData = {
-    symbol: "AAPL",
-    quantity: 10,
-    avgCost: 150,
-    currentPrice: 260.48,
-    change: -0.01,
-    percentageChange: -0.0038,
-    highPrice: 262.19,
-    lowPrice: 259.023123,
-    openPrice: 259.98,
-    previousClose: 260.49,
-    timestamp: 1775851200,
-    fetchFailed: false,
-    profile: {
-      companyName: "Apple Inc.",
-      logo: "https://financialmodelingprep.com",
-      website: "https://apple.com",
-      sector: "Technology",
-      beta: 1.109,
-      marketCap: 3828515423772
-    },
-    metrics: {
-      grossMargin: 0.4690516410716045,
-      peRatio: 34.092882867601105,
-      dividendYield: 0.004038238951672435,
-      debtEquity: 1.5241072518411023
-    },
-    growth: {
-      revenueGrowth: 0.0642551178283274
-    },
-    quote: {
-      yearHigh: 288.62,
-      yearLow: 189.81
-    },
-    marketValue: 2604.8, // Calculated: quantity * currentPrice
-    costBasis: 1500,     // Calculated: quantity * avgCost
-    totalPnL: 1104.8,    // Calculated: marketValue - costBasis
-    news: [
-      {
-        headline: "TSMC’s Record Q1 AI Revenue Puts Capex And Growth In Focus",
-        summary: "TSMC (NYSE:TSM) reported preliminary Q1 2026 results showing record revenue growth...",
-        source: "Yahoo",
-        datetime: 1775977737,
-        url: "https://finnhub.io",
-        image: "https://yimg.com"
-      },
-      {
-        headline: "2.5 Billion Reasons Apple Might Be the Best Artificial Intelligence (AI) Stock to Buy Today",
-        summary: "Apple may not be falling behind in AI after all.",
-        source: "Yahoo",
-        datetime: 1775943540,
-        url: "https://finnhub.io",
-        image: "https://yimg.com"
-      },
-      {
-        headline: "Gary Black Says Tesla's 8-Week Slide Driven By 'Disappointing' Deliveries, Robotaxi Doubts...",
-        summary: "Investor Gary Black, who is a managing partner at The Future Fund LLC, has outlined...",
-        source: "Yahoo",
-        datetime: 1775935869,
-        url: "https://finnhub.io",
-        image: "https://yimg.com"
-      },
-      {
-        headline: "Japan Bets $16 Billion to Propel Rapidus in Global AI Chip Race",
-        summary: "(Bloomberg) -- Japan approved ¥631.5 billion ($4 billion) in additional subsidies...",
-        source: "Yahoo",
-        datetime: 1775906706,
-        url: "https://finnhub.io",
-        image: "https://yimg.com"
-      },
-      {
-        headline: "VTSAX vs VOO ETF: Which Vanguard Fund Should You Buy in 2026?",
-        summary: "For investors seeking low-cost U.S. stock market exposure, two Vanguard funds dominate...",
-        source: "Yahoo",
-        datetime: 1775905797,
-        url: "https://finnhub.io",
-        image: "https://yimg.com"
-      },
-      {
-        headline: "After A Chaotic Q1, I'm Buying XLK And XLC As The Market Exhales",
-        summary: "XLK outlook: why tech remains a buy despite Q1 volatility.",
-        source: "SeekingAlpha",
-        datetime: 1775897100,
-        url: "https://finnhub.io",
-        image: "https://seekingalpha.com"
-      },
-      {
-        headline: "Potential $5,000 Monthly Income: 12 Investments To Buy And Hold For The Next 10 Years",
-        summary: "Diversified hands-off retirement portfolio: 12 funds targeting 6% yield + 6% dividend growth.",
-        source: "SeekingAlpha",
-        datetime: 1775895000,
-        url: "https://finnhub.io",
-        image: "https://seekingalpha.com"
-      },
-      {
-        headline: "Anthropic, OpenAI And Big Tech's 'Number One Goal' Is To Kill OpenClaw...",
-        summary: "Jason Calacanis says competitors are racing to overtake OpenClaw...",
-        source: "Benzinga",
-        datetime: 1775881740,
-        url: "https://finnhub.io",
-        image: "https://benzinga.com"
-      }
-    ]
-  };
+    this.detailsCache[symbol] = result;
 
-    return appleData;
+    return result;
   }
 }

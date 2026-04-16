@@ -70,19 +70,23 @@ export async function loadHeaderFooter() {
 // ----------------------------------------------------
 
 export function getToneClass(label, value) {
-  if (
-    value > 0 &&
-    (label === "PnL" || label === "Return %" || label === "Change")
-  ) {
-    return "tone-positive";
-  } else if (
-    value < 0 &&
-    (label === "PnL" || label === "Return %" || label === "Change")
-  ) {
-    return "tone-negative";
-  } else {
+  const toneLabels = new Set([
+    "Change",
+    "PnL",
+    "Return %",
+    "percentageChange"
+  ]);
+
+  if (!toneLabels.has(label)) return "tone-neutral";
+
+  if (typeof value !== "number" || isNaN(value)) {
     return "tone-neutral";
   }
+
+  if (value > 0) return "tone-positive";
+  if (value < 0) return "tone-negative";
+
+  return "tone-neutral";
 }
 
 export const EMPTY_DISPLAY = "—";
@@ -106,7 +110,19 @@ export function formatPercent(value, options = {}) {
   if (!Number.isFinite(number)) return EMPTY_DISPLAY;
   if (number === 0 && !allowZero) return EMPTY_DISPLAY;
 
-  return `${(number * 100).toFixed(decimals)}%`;
+  const sign = number >= 0 ? "+" : "-";
+  return `${sign}${Math.abs(number).toFixed(decimals)}%`;
+}
+
+export function formatPrice(value, options = {}) {
+  const { allowZero = true, decimals = 2 } = options;
+  if (value == null || value === "") return EMPTY_DISPLAY;
+
+  const number = Number(value);
+  if (!Number.isFinite(number)) return EMPTY_DISPLAY;
+  if (number === 0 && !allowZero) return EMPTY_DISPLAY;
+
+  return `$${number.toLocaleString('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals })}`;
 }
 
 export function displayValue(value) {
@@ -148,4 +164,14 @@ export function applyImageFallback(imgEl, fallbackText = "N/A") {
 
     imgEl.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
   };
+}
+
+export function setRotatingClass(btn) {
+  if(!btn) return;
+  btn.classList.add("is-rotating");
+}
+
+export function removeRotatingClass(btn) {
+  if(!btn) return;
+  btn.classList.remove("is-rotating");
 }

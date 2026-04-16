@@ -5,25 +5,91 @@ const FMP_BASE_URL = import.meta.env.VITE_FMP_BASE_URL;
 export default class StockData {
   async convertToJson(res) {
     const jsonResponse = await res.json();
-    if (res.ok) {
-      return jsonResponse;
-    } else {
-      throw new Error(JSON.stringify(jsonResponse));
+    if (res.ok) return jsonResponse;
+    throw new Error(JSON.stringify(jsonResponse));
+  }
+
+  // ---------------------------
+  // FALLBACK SHAPES
+  // ---------------------------
+
+  getEmptyQuote() {
+    return {
+      currentPrice: null,
+      change: null,
+      percentageChange: null,
+      highPrice: null,
+      lowPrice: null,
+      openPrice: null,
+      previousClose: null,
+      timestamp: null
+    };
+  }
+
+  getEmptyProfile() {
+    return {
+      companyName: null,
+      logo: null,
+      website: null,
+      sector: null,
+      beta: null,
+      marketCap: null
+    };
+  }
+
+  getEmptyMetrics() {
+    return {
+      grossMargin: null,
+      peRatio: null,
+      dividendYield: null,
+      debtEquity: null
+    };
+  }
+
+  getEmptyQuoteFMP() {
+    return {
+      yearHigh: null,
+      yearLow: null
+    };
+  }
+
+  getEmptyGrowth() {
+    return {
+      revenueGrowth: null
+    };
+  }
+
+  getEmptyNews() {
+    return [];
+  }
+
+  // ---------------------------
+  // DATA FETCHING
+  // ---------------------------
+
+  async getData(symbol) {
+    try {
+      const response = await fetch(
+        `https://finnhub.io/api/v1/quote?symbol=${symbol}&token=${API_KEY}`
+      );
+
+      const data = await this.convertToJson(response);
+      const normalized = this.normalizeData(data);
+
+      return {
+        status: "success",
+        data: { ...this.getEmptyQuote(), ...normalized }
+      };
+    } catch (error) {
+      console.error("Error fetching quote:", error);
+      return {
+        status: "error",
+        data: this.getEmptyQuote()
+      };
     }
   }
 
-  async getData(symbol) {
-    const response = await fetch(
-      `https://finnhub.io/api/v1/quote?symbol=${symbol}&token=${API_KEY}`,
-    );
-    const data = await this.convertToJson(response);
-    const normalizedData = this.normalizeData(data);
-    console.log(normalizedData);
-    return normalizedData;
-  }
-
-   async getStockNews(symbol) {
-    // Calculate date range (last 7 days)
+  async getStockNews(symbol) {
     const toDate = new Date();
     const fromDate = new Date();
     fromDate.setDate(toDate.getDate() - 7);
@@ -34,27 +100,32 @@ export default class StockData {
 
     try {
       const response = await fetch(url);
-
       const data = await this.convertToJson(response);
 
-      if (!data || data.length === 0) return [];
+      if (!data || data.length === 0) {
+        return { status: "error", data: this.getEmptyNews() };
+      }
 
-      // Take first 8 articles, no sorting
       const limited = data.slice(0, 8);
 
-      // Normalize
-      return limited.map(article => ({
-        headline: article.headline || "",
-        summary: article.summary || null,
-        source: article.source || "",
-        datetime: article.datetime || null,
-        url: article.url || "",
-        image: article.image || null
-      }));
+      return {
+        status: "success",
+        data: limited.map(article => ({
+          headline: article.headline || "",
+          summary: article.summary || null,
+          source: article.source || "",
+          datetime: article.datetime || null,
+          url: article.url || "",
+          image: article.image || null
+        }))
+      };
 
     } catch (error) {
       console.error("Error fetching stock news:", error);
-      return [];
+      return {
+        status: "error",
+        data: this.getEmptyNews()
+      };
     }
   }
 
@@ -66,24 +137,33 @@ export default class StockData {
 
       const data = await this.convertToJson(response);
 
-      if (!data || data.length === 0) return null;
+      if (!data || data.length === 0) {
+        return { status: "error", data: this.getEmptyProfile() };
+      }
 
       const item = data[0];
 
       return {
-        companyName: item.companyName,
-        logo: item.image,
-        website: item.website,
-        sector: item.sector,
-        beta: item.beta,
-        marketCap: item.marketCap
+        status: "success",
+        data: {
+          ...this.getEmptyProfile(),
+          companyName: item.companyName ?? null,
+          logo: item.image ?? null,
+          website: item.website ?? null,
+          sector: item.sector ?? null,
+          beta: item.beta ?? null,
+          marketCap: item.marketCap ?? null
+        }
       };
     } catch (error) {
       console.error("Error fetching stock profile:", error);
-      return null;
+      return {
+        status: "error",
+        data: this.getEmptyProfile()
+      };
     }
   }
-  
+
   async getStockMetrics(symbol) {
     try {
       const response = await fetch(
@@ -92,19 +172,28 @@ export default class StockData {
 
       const data = await this.convertToJson(response);
 
-      if (!data || data.length === 0) return null;
+      if (!data || data.length === 0) {
+        return { status: "error", data: this.getEmptyMetrics() };
+      }
 
       const item = data[0];
 
       return {
-        grossMargin: item.grossProfitMargin,
-        peRatio: item.priceToEarningsRatio,
-        dividendYield: item.dividendYield,
-        debtEquity: item.debtToEquityRatio,
+        status: "success",
+        data: {
+          ...this.getEmptyMetrics(),
+          grossMargin: item.grossProfitMargin ?? null,
+          peRatio: item.priceToEarningsRatio ?? null,
+          dividendYield: item.dividendYield ?? null,
+          debtEquity: item.debtToEquityRatio ?? null
+        }
       };
     } catch (error) {
       console.error("Error fetching stock metrics:", error);
-      return null;
+      return {
+        status: "error",
+        data: this.getEmptyMetrics()
+      };
     }
   }
 
@@ -116,17 +205,26 @@ export default class StockData {
 
       const data = await this.convertToJson(response);
 
-      if (!data || data.length === 0) return null;
+      if (!data || data.length === 0) {
+        return { status: "error", data: this.getEmptyQuoteFMP() };
+      }
 
       const item = data[0];
 
       return {
-        yearHigh: item.yearHigh,
-        yearLow: item.yearLow
+        status: "success",
+        data: {
+          ...this.getEmptyQuoteFMP(),
+          yearHigh: item.yearHigh ?? null,
+          yearLow: item.yearLow ?? null
+        }
       };
     } catch (error) {
       console.error("Error fetching stock quote:", error);
-      return null;
+      return {
+        status: "error",
+        data: this.getEmptyQuoteFMP()
+      };
     }
   }
 
@@ -135,54 +233,49 @@ export default class StockData {
       const response = await fetch(
         `${FMP_BASE_URL}/financial-growth?symbol=${symbol}&apikey=${FMP_API_KEY}`
       );
-      
+
       const data = await this.convertToJson(response);
 
-      if (!data || data.length === 0) return null;
+      if (!data || data.length === 0) {
+        return { status: "error", data: this.getEmptyGrowth() };
+      }
 
       const item = data[0];
 
       return {
-        revenueGrowth: item.revenueGrowth,
+        status: "success",
+        data: {
+          ...this.getEmptyGrowth(),
+          revenueGrowth: item.revenueGrowth ?? null
+        }
       };
     } catch (error) {
       console.error("Error fetching stock growth data:", error);
-      return null;
+      return {
+        status: "error",
+        data: this.getEmptyGrowth()
+      };
     }
-  }  
+  }
+
+  // ---------------------------
+  // NORMALIZATION
+  // ---------------------------
 
   normalizeData(object) {
-    if (!object) return {};
-    return Object.keys(object).reduce((normalized, key) => {
-      const value = object[key];
-      if (value == null) return normalized; // minimal validation
-      switch (key) {
-        case "c":
-          normalized.currentPrice = value;
-          break;
-        case "d":
-          normalized.change = value;
-          break;
-        case "dp":
-          normalized.percentageChange = value;
-          break;
-        case "h":
-          normalized.highPrice = value;
-          break;
-        case "l":
-          normalized.lowPrice = value;
-          break;
-        case "o":
-          normalized.openPrice = value;
-          break;
-        case "pc":
-          normalized.previousClose = value;
-          break;
-        case "t":
-          normalized.timestamp = value;
-          break;
-      }
-      return normalized;
-    }, {});
+    const base = this.getEmptyQuote();
+
+    if (!object) return base;
+
+    return {
+      currentPrice: object.c ?? null,
+      change: object.d ?? null,
+      percentageChange: object.dp ?? null,
+      highPrice: object.h ?? null,
+      lowPrice: object.l ?? null,
+      openPrice: object.o ?? null,
+      previousClose: object.pc ?? null,
+      timestamp: object.t ?? null
+    };
   }
 }

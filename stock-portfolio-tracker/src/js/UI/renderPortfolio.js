@@ -1,4 +1,4 @@
-import { formatNumber, displayValue } from "../modules/utils.mjs";
+import { formatNumber, formatPrice, formatPercent, getToneClass, displayValue } from "../modules/utils.mjs";
 
 export function renderPortfolio(portfolioData, container) {
   const containerEl =
@@ -11,15 +11,19 @@ export function renderPortfolio(portfolioData, container) {
 
   const cardsHTML = portfolioData
     .map((item) => {
-      const price = formatNumber(item.currentPrice, { allowZero: false });
+      const price = formatPrice(item.currentPrice, { allowZero: false });
       const quantity = formatNumber(item.quantity);
-      const averageCost = formatNumber(item.avgCost);
-      const marketValue = formatNumber(item.marketValue);
-      const costBasis = formatNumber(item.costBasis);
-      const high = formatNumber(item.highPrice, { allowZero: false });
-      const low = formatNumber(item.lowPrice, { allowZero: false });
-      const open = formatNumber(item.openPrice, { allowZero: false });
-      const prevClose = formatNumber(item.previousClose, { allowZero: false });
+      const averageCost = formatPrice(item.avgCost);
+      const marketValue = formatPrice(item.marketValue);
+      const costBasis = formatPrice(item.costBasis);
+      const high = formatPrice(item.highPrice, { allowZero: false });
+      const low = formatPrice(item.lowPrice, { allowZero: false });
+      const open = formatPrice(item.openPrice, { allowZero: false });
+      const prevClose = formatPrice(item.previousClose, { allowZero: false });
+      const percentageChange = formatPercent(item.percentageChange);
+      const change = formatPrice(item.change);
+      const changeTone = getToneClass("Change", item.change);
+      const percentTone = getToneClass("percentageChange", item.percentageChange);
       const dayRange = prevClose !== "—" && high !== "—" ? `${prevClose} - ${high}` : "—";
       const symbol = displayValue(item.symbol);
       const companyName = displayValue(item.companyName);
@@ -36,11 +40,17 @@ export function renderPortfolio(portfolioData, container) {
 
                 <div class="flex-between">
                   <div class="flex-col-gap">
-                    <span class="stock-symbol">${symbol}</span>
+                    <div class="flex items-center gap-sm">
+                      <span class="stock-symbol">${symbol}</span>
+                      <div class="stock-percent-change ${percentTone} text-small">${percentageChange}</div>
+                    </div>
                     <span class="stock-name">${companyName}</span>
                   </div>
 
-                  <div class="stock-price">${price}</div>
+                  <div class="flex-col items-end">
+                    <div class="stock-price">${price}</div>
+                    <span class="stock-change text-small ${changeTone}">${change}</span>
+                  </div>
                 </div>
 
                 <div class="flex-between summary-metrics-row">

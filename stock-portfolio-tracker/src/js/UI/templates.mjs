@@ -30,7 +30,7 @@ export function addStockTemplate() {
 
         <div class="modal-actions">
           <button type="button" class="modal-cancel">Cancel</button>
-          <button type="submit" class="button-primary">Add Stock</button>
+          <button type="submit" class="button-primary animated-border cta">Add Stock</button>
         </div>
       </form>
 
@@ -54,7 +54,7 @@ export const authTemplate = () => `
       Do not have an account? <span class="modal-link-text">Sign Up</span>
       </button>
 
-      <button type="submit" class="button-primary">Log In</button>
+      <button type="submit" class="button-primary animated-border cta">Log In</button>
       
     </form>
 
@@ -147,8 +147,7 @@ export function stockDetailsHeaderTemplate(symbol) {
       </div>
 
       <button
-        id="details-refresh-btn"
-        class="details-refresh-btn"
+        id="refresh-btn"
         aria-label="Refresh data"
       >
         <svg

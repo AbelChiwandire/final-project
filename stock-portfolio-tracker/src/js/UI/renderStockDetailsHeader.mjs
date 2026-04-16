@@ -9,10 +9,4 @@ export function renderStockDetailsHeader(symbol, containerId, manager) {
     .addEventListener("click", () => {
         window.location.href = "../index.html";
     });
-
-    document.getElementById("details-refresh-btn")
-    .addEventListener("click", () => {
-        // call your stock-details refresh function here
-        manager.refreshPortfolio(symbol);
-    });
 }

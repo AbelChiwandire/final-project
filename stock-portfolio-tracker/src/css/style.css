@@ -12,28 +12,38 @@
 
 /* Light mode */
 :root {
-  --bg: 210 20% 98%;
-  --text: 222 47% 11%;
+  --bg: 210 20% 94%;
+  --text: 222 47% 7%;
 
   --card: 0 0% 100%;
-  --muted: 210 20% 94%;
-  --border: 214 32% 91%;
+  --muted: 210 20% 90%;
+  --border: 214 32% 85%;
 
-  --primary: 142 76% 36%;
+  --primary: 142 65% 22%;
+  --primary-metric: 142 65% 22%;
+  --primary-cta: 142 65% 22%;
+  --accent-border: 270 70% 65%;
+  --danger: 0 65% 35%;
 
   --radius: 8px;
+  --shimmer-highlight: rgba(0, 0, 0, 0.08);
 }
 
 /* Dark mode */
 .dark {
-  --bg: 222 47% 6%;
+  --bg: 222 47% 3%;
   --text: 210 20% 98%;
 
-  --card: 222 47% 9%;
-  --muted: 217 33% 14%;
-  --border: 217 33% 17%;
+  --card: 222 47% 6%;
+  --muted: 217 33% 10%;
+  --border: 217 33% 13%;
 
-  --primary: 142 76% 36%;
+  --primary: 142 65% 22%;
+  --primary-metric: 120 95% 42%;
+  --primary-cta: 0 0% 100%;
+  --accent-border: 190 90% 55%;
+  --danger: 0 100% 80%;
+  --shimmer-highlight: rgba(255, 255, 255, 0.14);
 }
 
 /* =========================
@@ -175,8 +185,9 @@ button:hover {
   fill: white;
 }
 
-.button-primary:hover {
-  background: hsl(142 76% 30%);
+.cta:hover {
+  background: none;
+  color: hsl(var(--primary-cta));
 }
 
 /* =========================
@@ -321,11 +332,11 @@ button svg {
 }
 
 .tone-positive {
-  color: #16a34a;
+  color: hsl(var(--primary-metric));
 }
 
 .tone-negative {
-  color: #dc2626;
+  color: hsl(var(--danger));
 }
 
 .page-container {
@@ -704,6 +715,12 @@ body.modal-open {
 
 .fallback-btn {
   margin-top: 10px;
+  padding: 1.2rem;
+  font-size: 1.2rem;
+}
+
+.fallback-btn:hover {
+  background: hsl(var(--primary-metric));
 }
 
 /* =========================
@@ -872,4 +889,115 @@ body.modal-open {
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+/* =========================
+   ANIMATED BORDER 
+========================= */
+
+.animated-border {
+  position: relative;
+  border-radius: var(--radius);
+  z-index: 0;
+}
+
+/* moving glow ring */
+.animated-border::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  padding: 2px;
+
+  background: linear-gradient(
+    90deg,
+    transparent,
+    hsl(var(--accent-border)),
+    transparent
+  );
+
+  background-size: 200% 100%;
+  animation: border-slide 2.2s linear infinite;
+
+  z-index: -1;
+
+  /* mask so it looks like border only */
+  -webkit-mask: 
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+
+  opacity: 0.85;
+}
+
+/* subtle glow pulse */
+.animated-border::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+
+  box-shadow: 0 0 0 1px hsl(190 90% 55% / 0.15),
+              0 0 12px hsl(190 90% 55% / 0.25);
+
+  opacity: 0.6;
+  z-index: -1;
+}
+
+@keyframes border-slide {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
+/* =========================
+   SHIMMER EFFECT
+========================= */
+.shimmer-item {
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer-item::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -150%;
+  width: 50%;
+  height: 100%;
+
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--shimmer-highlight) 50%,
+    transparent 100%
+  );
+
+  transform: skewX(-20deg);
+  animation: shimmer-move 3.5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes shimmer-move {
+  0% {
+    left: -150%;
+  }
+  100% {
+    left: 150%;
+  }
+}
+/* =========================
+   REFRESH BUTTON ROTATION
+========================= */
+.is-rotating {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
