@@ -180,11 +180,6 @@ button:hover {
   border: 1px solid transparent;
 }
 
-.button-primary svg {
-  stroke: white;
-  fill: white;
-}
-
 .cta:hover {
   background: none;
   color: hsl(var(--primary-cta));
@@ -245,14 +240,6 @@ button svg {
   height: 28px;
 }
 
-.logo-icon path {
-  fill: #111;
-}
-
-.dark .logo-icon path {
-  fill: #fff;
-}
-
 .settings-icon path {
   stroke: hsl(var(--text));
 }
@@ -280,6 +267,75 @@ button svg {
 
 .header span {
   font-weight: 600;
+}
+
+/* =========================
+   RESPONSIVE HEADER
+========================= */
+
+.header-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.header-title {
+  font-size: 1.25rem;
+}
+
+.header-timestamp {
+  font-size: 0.8rem;
+}
+
+.add-stock-text {
+  display: inline;
+}
+
+/* Tablet and below */
+@media (max-width: 768px) {
+  .header-icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .header-title {
+    font-size: 1.1rem;
+  }
+
+  .header-timestamp {
+    font-size: 0.75rem;
+  }
+
+  .header-title-group {
+    gap: 6px;
+  }
+}
+
+/* Mobile devices */
+@media (max-width: 640px) {
+  .add-stock-text {
+    display: none;
+  }
+
+  .header-icon {
+    width: 18px;
+    height: 18px;
+  }
+
+  .header-title {
+    font-size: 1rem;
+  }
+
+  .header-timestamp {
+    font-size: 0.7rem;
+  }
+
+  .header-buttons {
+    gap: 8px;
+  }
+
+  .header-title-group {
+    gap: 4px;
+  }
 }
 
 /* =========================

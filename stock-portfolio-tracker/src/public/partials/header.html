@@ -1,25 +1,26 @@
-<div class="flex items-center justify-between p-md page-container">
+<div class="flex items-center justify-between p-md page-container header-responsive">
   <div class="flex items-center gap-sm">
     <svg
-      class="logo-icon"
+      class="logo-icon header-icon"
       viewBox="0 0 64 64"
       xmlns="http://www.w3.org/2000/svg"
     >
       <path
-        fill="#000"
+        fill="currentColor"
         d="M60,16.71H42.57a.5.5,0,0,0-.5.5V21a.5.5,0,0,0,.5.5h9.74L37.84,35.78,23.93,25.86l-1.32-.93A.5.5,0,0,0,22,25L3.64,43.81a.49.49,0,0,0,0,.7l2.7,2.64a.48.48,0,0,0,.35.14h0a.47.47,0,0,0,.35-.15L22.83,30.93l13.88,9.89,1.29.92a.5.5,0,0,0,.64-.05L55.73,24.8v9.84a.5.5,0,0,0,.5.5H60a.5.5,0,0,0,.5-.5V17.21A.5.5,0,0,0,60,16.71Z"
       />
     </svg>
-    <div class="flex gap-md items-center">
-      <span>StockFolio</span>
-      <span id="last-updated" class="text-small text-muted">Updated: --</span>
+    <div class="flex gap-md items-center header-title-group">
+      <span class="header-title">StockFolio</span>
+      <span id="last-updated" class="text-small header-timestamp">Updated: --</span>
     </div>
   </div>
 
-  <div class="flex items-center gap-md">
+  <div class="flex items-center gap-md header-buttons">
     <button
       id="refresh-btn"
       aria-label="Refresh data"
+      class="header-icon-btn"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -31,6 +32,7 @@
         stroke-width="1.5"
         stroke-linecap="round"
         stroke-linejoin="round"
+        class="header-icon"
       >
         <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path>
         <path d="M21 3v5h-5"></path>
@@ -39,9 +41,9 @@
       </svg>
     </button>
 
-    <button aria-label="Settings" id="settings-btn">
+    <button aria-label="Settings" id="settings-btn" class="header-icon-btn">
       <svg
-        class="settings-icon"
+        class="settings-icon header-icon"
         width="800px"
         height="800px"
         viewBox="0 0 24 24"
@@ -71,6 +73,7 @@
         viewBox="0 0 24 24"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
+        class="header-icon"
       >
         <g id="Edit / Add_Plus">
           <path
@@ -83,7 +86,7 @@
           />
         </g>
       </svg>
-      <span>Add Stock</span>
+      <span class="add-stock-text">Add Stock</span>
     </button>
   </div>
 </div>
