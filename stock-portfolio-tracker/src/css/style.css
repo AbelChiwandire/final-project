@@ -52,7 +52,10 @@
 
 body {
   margin: 0;
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
 
   display: flex;
   flex-direction: column;
@@ -60,10 +63,13 @@ body {
   background: hsl(var(--bg));
   color: hsl(var(--text));
 
-  transition: background 0.3s ease, color 0.3s ease;
+  transition:
+    background 0.3s ease,
+    color 0.3s ease;
 }
 
-html, body {
+html,
+body {
   height: 100%;
 }
 
@@ -97,25 +103,49 @@ footer {
   justify-content: space-between;
 }
 
-.items-center { align-items: center; }
-.justify-between { justify-content: space-between; }
+.items-center {
+  align-items: center;
+}
+.justify-between {
+  justify-content: space-between;
+}
 
-.gap-sm { gap: 6px; }
-.gap-md { gap: 12px; }
+.gap-sm {
+  gap: 6px;
+}
+.gap-md {
+  gap: 12px;
+}
 
 /* =========================
    SPACING
 ========================= */
 
-.p-sm { padding: 6px; }
-.p-md { padding: 12px; }
-.p-lg { padding: 16px; }
+.p-sm {
+  padding: 6px;
+}
+.p-md {
+  padding: 12px;
+}
+.p-lg {
+  padding: 16px;
+}
 
-.px-md { padding-left: 12px; padding-right: 12px; }
-.py-sm { padding-top: 6px; padding-bottom: 6px; }
+.px-md {
+  padding-left: 12px;
+  padding-right: 12px;
+}
+.py-sm {
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
 
-.mb-md { margin-bottom: 12px; }
-.margin-top { margin-top: 16px; }
+.mb-md {
+  margin-bottom: 12px;
+}
+.margin-top {
+  margin-top: 16px;
+}
 
 /* =========================
    TEXT
@@ -155,7 +185,7 @@ button {
 }
 
 button:hover {
-  background: rgba(0,0,0,0.05);
+  background: rgba(0, 0, 0, 0.05);
 }
 
 .dark button:hover {
@@ -193,14 +223,20 @@ button:hover {
   border-top: 1px solid hsl(var(--border));
 }
 
-.border { border: 1px solid var(--border); }
-.rounded { border-radius: var(--radius); }
+.border {
+  border: 1px solid var(--border);
+}
+.rounded {
+  border-radius: var(--radius);
+}
 
 /* =========================
    INTERACTION
 ========================= */
 
-.cursor { cursor: pointer; }
+.cursor {
+  cursor: pointer;
+}
 
 /* =========================
    CARD
@@ -216,11 +252,10 @@ button:hover {
 }
 
 .card-content:hover {
- /* transform: translateY(-2px);*/
+  /* transform: translateY(-2px);*/
   border-color: rgba(16, 185, 129, 0.4);
   box-shadow: 0 10px 25px rgba(16, 185, 129, 0.05);
 }
-
 
 /* SVGs */
 
@@ -344,26 +379,29 @@ button svg {
 
 .portfolio-summary {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
+  gap: 16px;
   margin-top: 16px;
+  grid-template-columns: 1fr;
 }
 
-.grid-3 {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 12px;
-}
-
-@media (max-width: 900px) {
+/* Tablet - 2 columns */
+@media (min-width: 768px) {
   .portfolio-summary {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
-@media (max-width: 500px) {
+/* Desktop - 3 columns (analytics will show all 3 cards in one row) */
+@media (min-width: 1024px) {
   .portfolio-summary {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Large desktop - 4 columns */
+@media (min-width: 1280px) {
+  .portfolio-summary {
+    grid-template-columns: repeat(4, 1fr);
   }
 }
 
@@ -474,6 +512,24 @@ button svg {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 20px;
+}
+
+.analytics {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 768px) {
+  .analytics {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (min-width: 1024px) {
+  .analytics {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
 }
 
 /* =========================
@@ -596,7 +652,9 @@ button svg {
   transform: translateY(10px) scale(0.98);
   opacity: 0;
 
-  transition: transform 0.25s ease, opacity 0.25s ease;
+  transition:
+    transform 0.25s ease,
+    opacity 0.25s ease;
 }
 
 .modal.modal-open .modal-panel {
@@ -692,7 +750,7 @@ button svg {
 }
 
 .modal-danger:hover {
-  background: #8f0808; 
+  background: #8f0808;
 }
 
 .modal-close {
@@ -831,7 +889,7 @@ body.modal-open {
 }
 
 .profile-website {
-  color: hsl(var(--primary))
+  color: hsl(var(--primary));
 }
 
 .profile-text {
@@ -866,14 +924,39 @@ body.modal-open {
   font-size: 0.9rem;
 }
 
+/* Responsive profile header */
+@media (max-width: 768px) {
+  .profile-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .profile-right {
+    align-items: flex-start;
+    align-self: stretch;
+  }
+}
+
 /* =========================
    RELATED NEWS
 ========================= */
 #stock-news-container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
   gap: 16px;
   margin-top: 12px;
+}
+
+/* Base layout - 1 column on mobile */
+#stock-news-container {
+  grid-template-columns: 1fr;
+}
+
+/* Tablet - 2 columns */
+@media (min-width: 768px) {
+  #stock-news-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 .news-card {
@@ -886,7 +969,9 @@ body.modal-open {
   border-radius: var(--radius);
 
   padding: 12px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .news-card:hover {
@@ -919,13 +1004,16 @@ body.modal-open {
 .news-card__content {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
+  min-width: 0; /* Prevent flex item overflow */
 }
 
 .news-card__headline {
   font-size: 14px;
   font-weight: 600;
   line-height: 1.3;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .news-card__meta {
@@ -940,11 +1028,25 @@ body.modal-open {
   font-size: 13px;
   line-height: 1.4;
   opacity: 0.85;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+/* Responsive fixes for news cards */
+@media (max-width: 768px) {
+  .news-card__image-wrapper {
+    width: 80px;
+    height: 60px;
+  }
+
+  .news-card {
+    padding: 10px;
+  }
 }
 
 /* =========================
@@ -978,11 +1080,11 @@ body.modal-open {
   z-index: -1;
 
   /* mask so it looks like border only */
-  -webkit-mask: 
+  -webkit-mask:
     linear-gradient(#000 0 0) content-box,
     linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
-          mask-composite: exclude;
+  mask-composite: exclude;
 
   opacity: 0.85;
 }
@@ -994,8 +1096,9 @@ body.modal-open {
   inset: 0;
   border-radius: inherit;
 
-  box-shadow: 0 0 0 1px hsl(190 90% 55% / 0.15),
-              0 0 12px hsl(190 90% 55% / 0.25);
+  box-shadow:
+    0 0 0 1px hsl(190 90% 55% / 0.15),
+    0 0 12px hsl(190 90% 55% / 0.25);
 
   opacity: 0.6;
   z-index: -1;
@@ -1054,6 +1157,10 @@ body.modal-open {
 }
 
 @keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }

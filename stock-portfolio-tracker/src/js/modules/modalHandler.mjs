@@ -2,7 +2,7 @@ import { openModal } from "./modal.mjs";
 
 export function openFormModal(templateFn, onSubmit, options = {}) {
   const { onInit } = options;
-  
+
   openModal((modalEl, closeModal) => {
     // Inject template
     modalEl.innerHTML = templateFn();

@@ -1,4 +1,10 @@
-import { formatNumber, formatPrice, formatPercent, getToneClass, displayValue } from "../modules/utils.mjs";
+import {
+  formatNumber,
+  formatPrice,
+  formatPercent,
+  getToneClass,
+  displayValue,
+} from "../modules/utils.mjs";
 
 export function renderPortfolio(portfolioData, container) {
   const containerEl =
@@ -23,8 +29,12 @@ export function renderPortfolio(portfolioData, container) {
       const percentageChange = formatPercent(item.percentageChange);
       const change = formatPrice(item.change);
       const changeTone = getToneClass("Change", item.change);
-      const percentTone = getToneClass("percentageChange", item.percentageChange);
-      const dayRange = prevClose !== "—" && high !== "—" ? `${prevClose} - ${high}` : "—";
+      const percentTone = getToneClass(
+        "percentageChange",
+        item.percentageChange,
+      );
+      const dayRange =
+        prevClose !== "—" && high !== "—" ? `${prevClose} - ${high}` : "—";
       const symbol = displayValue(item.symbol);
       const companyName = displayValue(item.companyName);
 

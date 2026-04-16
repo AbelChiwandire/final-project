@@ -1,4 +1,8 @@
-import { openAddStockModal, openSettingsModal, openAuthModal } from "../modules/features.mjs";
+import {
+  openAddStockModal,
+  openSettingsModal,
+  openAuthModal,
+} from "../modules/features.mjs";
 import { User } from "../modules/auth.mjs";
 
 export default function initHeaderController(portfolioManager) {
@@ -21,9 +25,7 @@ export default function initHeaderController(portfolioManager) {
       try {
         await portfolioManager.refreshPortfolio();
 
-        document.dispatchEvent(
-          new CustomEvent("portfolioUpdated")
-        );
+        document.dispatchEvent(new CustomEvent("portfolioUpdated"));
       } catch (err) {
         console.error("Refresh failed:", err);
       }
@@ -38,8 +40,7 @@ export default function initHeaderController(portfolioManager) {
     });
   }
 
-  settingsBtn
-  ?.addEventListener("click", () => {
+  settingsBtn?.addEventListener("click", () => {
     if (!requireAuth()) return;
 
     openSettingsModal();

@@ -91,17 +91,18 @@ export default class PortfolioManager {
   }
 
   computePositionValues(position, currentPrice) {
-    const marketValue = currentPrice != null && Number.isFinite(currentPrice)
-      ? currentPrice * position.quantity
-      : null;
+    const marketValue =
+      currentPrice != null && Number.isFinite(currentPrice)
+        ? currentPrice * position.quantity
+        : null;
 
-    const costBasis = position.avgCost != null && Number.isFinite(position.avgCost)
-      ? position.avgCost * position.quantity
-      : null;
+    const costBasis =
+      position.avgCost != null && Number.isFinite(position.avgCost)
+        ? position.avgCost * position.quantity
+        : null;
 
-    const totalPnL = marketValue != null && costBasis != null
-      ? marketValue - costBasis
-      : null;
+    const totalPnL =
+      marketValue != null && costBasis != null ? marketValue - costBasis : null;
 
     return { marketValue, costBasis, totalPnL };
   }
@@ -187,7 +188,7 @@ export default class PortfolioManager {
       { label: "Total Value", value: totalValue, type: "currency" },
       { label: "Total Cost", value: totalCost, type: "currency" },
       { label: "Total PnL", value: totalPnL, type: "currency" },
-      { label: "Return %", value: returnPercentage, type: "percent" }
+      { label: "Return %", value: returnPercentage, type: "percent" },
     ];
   }
 
@@ -233,7 +234,7 @@ export default class PortfolioManager {
         finnhubData = {
           ...position,
           ...this.DEFAULT_STOCK_DATA,
-          ...(fetched?.data || {}), 
+          ...(fetched?.data || {}),
           fetchFailed: false,
         };
 
@@ -258,7 +259,7 @@ export default class PortfolioManager {
       const safeFetch = async (fn, fallback) => {
         try {
           const result = await fn();
-          return result?.data ?? fallback; 
+          return result?.data ?? fallback;
         } catch {
           return fallback;
         }

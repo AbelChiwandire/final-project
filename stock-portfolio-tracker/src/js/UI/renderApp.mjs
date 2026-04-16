@@ -8,7 +8,10 @@ function updateLastUpdated() {
   const el = document.getElementById("last-updated");
   if (el) {
     const now = new Date();
-    const formatted = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    const formatted = now.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
     el.textContent = `Updated: ${formatted}`;
   }
 }
@@ -67,8 +70,7 @@ export function renderApp(portfolioManager) {
     }
 
     const btn = document.getElementById("fallback-add-btn");
-    if (btn) btn.addEventListener("click", () =>
-      openAddStockModal(null));
+    if (btn) btn.addEventListener("click", () => openAddStockModal(null));
   };
 
   // -----------------------------

@@ -1,11 +1,14 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="author" content="Abel Chiwandire">
-    <meta name="description" content="View key stock perfomance metrics and analytics and discover current news related to the stock.">
-   <title>StockFolio | Stock Details</title>
+    <meta name="author" content="Abel Chiwandire" />
+    <meta
+      name="description"
+      content="View key stock perfomance metrics and analytics and discover current news related to the stock."
+    />
+    <title>StockFolio | Stock Details</title>
     <link rel="stylesheet" href="../css/style.css" />
     <script type="module" src="../js/details.js"></script>
   </head>
@@ -13,7 +16,10 @@
     <header id="details-header-root" class="header"></header>
 
     <main>
-      <div id="stock-profile-container" class="page-container page-section"></div>
+      <div
+        id="stock-profile-container"
+        class="page-container page-section"
+      ></div>
 
       <section id="metrics-container" class="page-container page-section">
         <h2 class="mb-md">Key Metrics</h2>
@@ -22,7 +28,7 @@
 
       <section id="analytics-container" class="page-container page-section">
         <h2 class="mb-md">Analytics</h2>
-        <div id="stock-analytics" class="grid-3"></div>
+        <div id="stock-analytics" class="analytics"></div>
       </section>
 
       <section id="news-container" class="page-container page-section">
@@ -31,10 +37,12 @@
       </section>
 
       <template id="news-card-template">
-        <a class="news-card card-content" target="_blank" rel="noopener noreferrer">
-          
+        <a
+          class="news-card card-content"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           <div class="news-card__main">
-
             <div class="news-card__image-wrapper">
               <img class="news-card__image" alt="News image" />
             </div>
@@ -47,11 +55,9 @@
                 <span class="news-card__timestamp"></span>
               </div>
             </div>
-
           </div>
 
           <p class="news-card__summary"></p>
-
         </a>
       </template>
     </main>

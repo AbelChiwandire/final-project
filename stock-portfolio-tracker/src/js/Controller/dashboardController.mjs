@@ -3,18 +3,20 @@ import { openAddStockModal } from "../modules/features.mjs";
 export default function initDashboardController(container, portfolioManager) {
   if (!container) return;
 
-  document.querySelector(container).addEventListener("click", (event) => handleClick(event, portfolioManager));
+  document
+    .querySelector(container)
+    .addEventListener("click", (event) => handleClick(event, portfolioManager));
 }
 
 function handleClick(event, portfolioManager) {
   const card = event.target.closest(".portfolio-card");
   if (!card) return;
 
-	const symbol = card.dataset.symbol;
-	if (!symbol) {
-		console.error("Missing data-symbol on portfolio-card");
-		return;
-	}
+  const symbol = card.dataset.symbol;
+  if (!symbol) {
+    console.error("Missing data-symbol on portfolio-card");
+    return;
+  }
   const actionElement = event.target.closest("[data-action]");
 
   if (actionElement) {
@@ -33,11 +35,11 @@ function handleClick(event, portfolioManager) {
 function handleAction(action, symbol, card, portfolioManager) {
   switch (action) {
     case "delete":
-			deleteStock(symbol, portfolioManager);
+      deleteStock(symbol, portfolioManager);
       break;
 
     case "edit":
-			openEditModal(symbol, portfolioManager);
+      openEditModal(symbol, portfolioManager);
       break;
 
     case "flip":
@@ -55,18 +57,18 @@ function navigateToDetails(symbol) {
 }
 
 function deleteStock(symbol, portfolioManager) {
-	portfolioManager.removePosition(symbol);
+  portfolioManager.removePosition(symbol);
 
-	document.dispatchEvent(new CustomEvent("portfolioUpdated"));
+  document.dispatchEvent(new CustomEvent("portfolioUpdated"));
 }
 
 function openEditModal(symbol, portfolioManager) {
   const currentPosition = portfolioManager.getPosition(symbol);
-	if (!currentPosition) {
-			console.error("Position not found for symbol:", symbol);
-				return;
-	}  
-	openAddStockModal(currentPosition);
+  if (!currentPosition) {
+    console.error("Position not found for symbol:", symbol);
+    return;
+  }
+  openAddStockModal(currentPosition);
 }
 
 function toggleCardFlip(card) {

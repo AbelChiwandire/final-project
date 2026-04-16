@@ -1,4 +1,8 @@
-import { loadHeaderFooter, setRotatingClass, removeRotatingClass } from "./modules/utils.mjs";
+import {
+  loadHeaderFooter,
+  setRotatingClass,
+  removeRotatingClass,
+} from "./modules/utils.mjs";
 import PortfolioManager from "./modules/PortfolioManager.mjs";
 import { User } from "./modules/auth.mjs";
 import { setPortfolioManager } from "./modules/features.mjs";
@@ -60,7 +64,6 @@ import { renderApp } from "./UI/renderApp.mjs";
         removeRotatingClass(refreshBtn);
       }
     }, 600000); // 60 sec (safe for API limits)
-
   } catch (err) {
     console.error("Error initializing app:", err);
   }

@@ -3,10 +3,12 @@ import { formatTimeAgo, applyImageFallback } from "../modules/utils.mjs";
 function getFallbackLabel(source) {
   if (!source) return "N/A";
 
-  return source
-    .replace(/[^a-zA-Z]/g, "")
-    .slice(0, 3)
-    .toUpperCase() || "N/A";
+  return (
+    source
+      .replace(/[^a-zA-Z]/g, "")
+      .slice(0, 3)
+      .toUpperCase() || "N/A"
+  );
 }
 
 export function renderStockNews(news, containerEl) {
@@ -21,7 +23,7 @@ export function renderStockNews(news, containerEl) {
 
   const fragment = document.createDocumentFragment();
 
-  news.forEach(article => {
+  news.forEach((article) => {
     const clone = template.content.cloneNode(true);
 
     const anchor = clone.querySelector(".news-card");

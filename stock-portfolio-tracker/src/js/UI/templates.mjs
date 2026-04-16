@@ -99,9 +99,7 @@ export function settingsTemplate({ username, theme }) {
 export function getFallbackTemplate(state) {
   const isAuth = state === "signin";
 
-  const heading = isAuth
-    ? "Welcome"
-    : "No positions yet";
+  const heading = isAuth ? "Welcome" : "No positions yet";
 
   const text = isAuth
     ? "Sign in or create an account to start tracking your portfolio."

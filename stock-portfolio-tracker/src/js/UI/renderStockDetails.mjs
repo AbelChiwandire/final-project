@@ -8,7 +8,7 @@ export function renderStockDetails(stockDetails, containers) {
     profileContainerEl,
     metricsContainerEl,
     analyticsContainerEl,
-    newsContainerEl
+    newsContainerEl,
   } = containers;
 
   renderStockProfile(stockDetails, profileContainerEl);
@@ -26,7 +26,7 @@ export function startAutoRefresh({
   containers,
   onRefreshStart,
   onRefreshEnd,
-  interval = 60000
+  interval = 60000,
 }) {
   return setInterval(async () => {
     // prevent overlapping refresh cycles
@@ -45,7 +45,6 @@ export function startAutoRefresh({
       const stockDetails = await portfolioManager.getStockDetails(symbol, true);
 
       renderStockDetails(stockDetails, containers);
-
     } catch (err) {
       console.error("Stock details refresh failed:", err);
     } finally {

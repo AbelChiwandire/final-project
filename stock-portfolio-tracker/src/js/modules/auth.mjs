@@ -2,8 +2,8 @@
 import {
   setCurrentUser,
   clearCurrentUser,
-  getCurrentUser
-} from './storage.mjs';
+  getCurrentUser,
+} from "./storage.mjs";
 
 const USERS_KEY = "users";
 const USERNAME_INDEX_KEY = "usernameIndex";
@@ -51,16 +51,16 @@ function normalizeUsername(username) {
 
 function generateId() {
   if (crypto?.randomUUID) return crypto.randomUUID();
-  return 'user-' + Math.random().toString(36).substr(2, 9);
+  return "user-" + Math.random().toString(36).substr(2, 9);
 }
 
 async function hashPassword(password) {
   const encoder = new TextEncoder();
   const data = encoder.encode(password);
-  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
   return Array.from(new Uint8Array(hashBuffer))
-    .map(b => b.toString(16).padStart(2, '0'))
-    .join('');
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
 }
 
 // ---------- User Class ----------
@@ -77,12 +77,17 @@ export class User {
       return { success: false, error: "Username and password required" };
 
     const index = getUsernameIndex();
-    if (index[this.username]) return { success: false, error: "Username already exists" };
+    if (index[this.username])
+      return { success: false, error: "Username already exists" };
 
     const users = getUsers();
     const hashedPassword = await hashPassword(this.password);
 
-    users[this.id] = { id: this.id, username: this.username, password: hashedPassword };
+    users[this.id] = {
+      id: this.id,
+      username: this.username,
+      password: hashedPassword,
+    };
     saveUsers(users);
 
     index[this.username] = this.id;
@@ -107,7 +112,8 @@ export class User {
     if (!user) return { success: false, error: "User data corrupted" };
 
     const hashedPassword = await hashPassword(this.password);
-    if (user.password !== hashedPassword) return { success: false, error: "Incorrect password" };
+    if (user.password !== hashedPassword)
+      return { success: false, error: "Incorrect password" };
 
     setCurrentUser(user.id);
     return { success: true, user };

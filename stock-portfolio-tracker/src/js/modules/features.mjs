@@ -14,32 +14,36 @@ export function setPortfolioManager(manager) {
 
 // ---- Portfolio Modal ----
 export function openAddStockModal(position = null) {
-  openFormModal(addStockTemplate, async (elements, closeModal) => {
-    const { symbol, shares, avgCost, companyName } = elements;
+  openFormModal(
+    addStockTemplate,
+    async (elements, closeModal) => {
+      const { symbol, shares, avgCost, companyName } = elements;
 
-    portfolioManager.setPosition(
-      symbol.value.toUpperCase(),
-      Number(shares.value),
-      Number(avgCost.value),
-      companyName.value,
-    );
+      portfolioManager.setPosition(
+        symbol.value.toUpperCase(),
+        Number(shares.value),
+        Number(avgCost.value),
+        companyName.value,
+      );
 
-    await portfolioManager.loadPortfolio();
+      await portfolioManager.loadPortfolio();
 
-    closeModal();
-    document.dispatchEvent(new CustomEvent("portfolioUpdated"));
-  },{
-    onInit: (elements) => {
-      if (position) {
-        elements.symbol.value = position.symbol;
-        elements.shares.value = position.quantity;
-        elements.avgCost.value = position.avgCost;
-        elements.companyName.value = position.companyName;
-        elements.symbol.disabled = true;
-        elements.companyName.disabled = true;
-      }
+      closeModal();
+      document.dispatchEvent(new CustomEvent("portfolioUpdated"));
     },
-  });
+    {
+      onInit: (elements) => {
+        if (position) {
+          elements.symbol.value = position.symbol;
+          elements.shares.value = position.quantity;
+          elements.avgCost.value = position.avgCost;
+          elements.companyName.value = position.companyName;
+          elements.symbol.disabled = true;
+          elements.companyName.disabled = true;
+        }
+      },
+    },
+  );
 }
 
 // ---- Auth Modal ----
@@ -98,7 +102,10 @@ export function openSettingsModal() {
     if (!user) return;
 
     const theme = getUserTheme(user.id);
-    const formattedUsername = user.username.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
+    const formattedUsername = user.username
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(" ");
 
     root.innerHTML = settingsTemplate({
       username: formattedUsername,

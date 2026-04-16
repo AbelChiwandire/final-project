@@ -22,7 +22,7 @@ export default class StockData {
       lowPrice: null,
       openPrice: null,
       previousClose: null,
-      timestamp: null
+      timestamp: null,
     };
   }
 
@@ -33,7 +33,7 @@ export default class StockData {
       website: null,
       sector: null,
       beta: null,
-      marketCap: null
+      marketCap: null,
     };
   }
 
@@ -42,20 +42,20 @@ export default class StockData {
       grossMargin: null,
       peRatio: null,
       dividendYield: null,
-      debtEquity: null
+      debtEquity: null,
     };
   }
 
   getEmptyQuoteFMP() {
     return {
       yearHigh: null,
-      yearLow: null
+      yearLow: null,
     };
   }
 
   getEmptyGrowth() {
     return {
-      revenueGrowth: null
+      revenueGrowth: null,
     };
   }
 
@@ -70,7 +70,7 @@ export default class StockData {
   async getData(symbol) {
     try {
       const response = await fetch(
-        `https://finnhub.io/api/v1/quote?symbol=${symbol}&token=${API_KEY}`
+        `https://finnhub.io/api/v1/quote?symbol=${symbol}&token=${API_KEY}`,
       );
 
       const data = await this.convertToJson(response);
@@ -78,13 +78,13 @@ export default class StockData {
 
       return {
         status: "success",
-        data: { ...this.getEmptyQuote(), ...normalized }
+        data: { ...this.getEmptyQuote(), ...normalized },
       };
     } catch (error) {
       console.error("Error fetching quote:", error);
       return {
         status: "error",
-        data: this.getEmptyQuote()
+        data: this.getEmptyQuote(),
       };
     }
   }
@@ -110,21 +110,20 @@ export default class StockData {
 
       return {
         status: "success",
-        data: limited.map(article => ({
+        data: limited.map((article) => ({
           headline: article.headline || "",
           summary: article.summary || null,
           source: article.source || "",
           datetime: article.datetime || null,
           url: article.url || "",
-          image: article.image || null
-        }))
+          image: article.image || null,
+        })),
       };
-
     } catch (error) {
       console.error("Error fetching stock news:", error);
       return {
         status: "error",
-        data: this.getEmptyNews()
+        data: this.getEmptyNews(),
       };
     }
   }
@@ -132,7 +131,7 @@ export default class StockData {
   async getStockProfile(symbol) {
     try {
       const response = await fetch(
-        `${FMP_BASE_URL}/profile?symbol=${symbol}&apikey=${FMP_API_KEY}`
+        `${FMP_BASE_URL}/profile?symbol=${symbol}&apikey=${FMP_API_KEY}`,
       );
 
       const data = await this.convertToJson(response);
@@ -152,14 +151,14 @@ export default class StockData {
           website: item.website ?? null,
           sector: item.sector ?? null,
           beta: item.beta ?? null,
-          marketCap: item.marketCap ?? null
-        }
+          marketCap: item.marketCap ?? null,
+        },
       };
     } catch (error) {
       console.error("Error fetching stock profile:", error);
       return {
         status: "error",
-        data: this.getEmptyProfile()
+        data: this.getEmptyProfile(),
       };
     }
   }
@@ -167,7 +166,7 @@ export default class StockData {
   async getStockMetrics(symbol) {
     try {
       const response = await fetch(
-        `${FMP_BASE_URL}/ratios?symbol=${symbol}&apikey=${FMP_API_KEY}`
+        `${FMP_BASE_URL}/ratios?symbol=${symbol}&apikey=${FMP_API_KEY}`,
       );
 
       const data = await this.convertToJson(response);
@@ -185,14 +184,14 @@ export default class StockData {
           grossMargin: item.grossProfitMargin ?? null,
           peRatio: item.priceToEarningsRatio ?? null,
           dividendYield: item.dividendYield ?? null,
-          debtEquity: item.debtToEquityRatio ?? null
-        }
+          debtEquity: item.debtToEquityRatio ?? null,
+        },
       };
     } catch (error) {
       console.error("Error fetching stock metrics:", error);
       return {
         status: "error",
-        data: this.getEmptyMetrics()
+        data: this.getEmptyMetrics(),
       };
     }
   }
@@ -200,7 +199,7 @@ export default class StockData {
   async getStockFMPQuote(symbol) {
     try {
       const response = await fetch(
-        `${FMP_BASE_URL}/quote?symbol=${symbol}&apikey=${FMP_API_KEY}`
+        `${FMP_BASE_URL}/quote?symbol=${symbol}&apikey=${FMP_API_KEY}`,
       );
 
       const data = await this.convertToJson(response);
@@ -216,14 +215,14 @@ export default class StockData {
         data: {
           ...this.getEmptyQuoteFMP(),
           yearHigh: item.yearHigh ?? null,
-          yearLow: item.yearLow ?? null
-        }
+          yearLow: item.yearLow ?? null,
+        },
       };
     } catch (error) {
       console.error("Error fetching stock quote:", error);
       return {
         status: "error",
-        data: this.getEmptyQuoteFMP()
+        data: this.getEmptyQuoteFMP(),
       };
     }
   }
@@ -231,7 +230,7 @@ export default class StockData {
   async getStockGrowth(symbol) {
     try {
       const response = await fetch(
-        `${FMP_BASE_URL}/financial-growth?symbol=${symbol}&apikey=${FMP_API_KEY}`
+        `${FMP_BASE_URL}/financial-growth?symbol=${symbol}&apikey=${FMP_API_KEY}`,
       );
 
       const data = await this.convertToJson(response);
@@ -246,14 +245,14 @@ export default class StockData {
         status: "success",
         data: {
           ...this.getEmptyGrowth(),
-          revenueGrowth: item.revenueGrowth ?? null
-        }
+          revenueGrowth: item.revenueGrowth ?? null,
+        },
       };
     } catch (error) {
       console.error("Error fetching stock growth data:", error);
       return {
         status: "error",
-        data: this.getEmptyGrowth()
+        data: this.getEmptyGrowth(),
       };
     }
   }
@@ -275,7 +274,7 @@ export default class StockData {
       lowPrice: object.l ?? null,
       openPrice: object.o ?? null,
       previousClose: object.pc ?? null,
-      timestamp: object.t ?? null
+      timestamp: object.t ?? null,
     };
   }
 }

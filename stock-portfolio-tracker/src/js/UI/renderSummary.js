@@ -1,10 +1,9 @@
-import { createMetricCard } from "./metricCard.js";
 import {
   getToneClass,
   formatNumber,
   formatPercent,
   formatPrice,
-  displayValue
+  displayValue,
 } from "../modules/utils.mjs";
 
 export function renderSummary(summaryData, container) {
@@ -16,15 +15,13 @@ export function renderSummary(summaryData, container) {
   if (!containerEl || !Array.isArray(summaryData)) return;
 
   // --- UI STATE (shimmer) ---
-  const isShimmerGroup =
-    containerEl.classList.contains("shimmer-group");
+  const isShimmerGroup = containerEl.classList.contains("shimmer-group");
 
   const formattedData = summaryData.map((item) => {
     const rawValue = item?.value;
     const type = item?.type || "number";
 
-    const isValidNumber =
-      typeof rawValue === "number" && !isNaN(rawValue);
+    const isValidNumber = typeof rawValue === "number" && !isNaN(rawValue);
 
     let formattedValue;
     let tone = "tone-neutral";
@@ -54,7 +51,7 @@ export function renderSummary(summaryData, container) {
       ...item,
       value: formattedValue,
       tone,
-      shimmer: isShimmerGroup
+      shimmer: isShimmerGroup,
     };
   });
 

@@ -5,7 +5,7 @@ import {
   formatPrice,
   displayValue,
   applyImageFallback,
-  getToneClass
+  getToneClass,
 } from "../modules/utils.mjs";
 
 export function renderStockProfile(data, containerEl) {
@@ -82,7 +82,7 @@ export function renderStockProfile(data, containerEl) {
       typeof data?.percentageChange === "number"
     ) {
       changeEl.textContent = `${formatNumber(data.change)} (${formatPercent(
-        data.percentageChange
+        data.percentageChange,
       )})`;
     } else {
       changeEl.textContent = "-";
@@ -97,15 +97,13 @@ export function renderStockProfile(data, containerEl) {
     const hasCostBasis = typeof data?.costBasis === "number";
 
     const totalPnL =
-      hasMarketValue && hasCostBasis
-        ? data.marketValue - data.costBasis
-        : null;
+      hasMarketValue && hasCostBasis ? data.marketValue - data.costBasis : null;
 
     const summaryData = [
       { label: "Shares Held", value: data?.quantity },
       { label: "Avg Cost", value: data?.avgCost },
       { label: "Market Value", value: data?.marketValue },
-      { label: "Total P&L", value: totalPnL }
+      { label: "Total P&L", value: totalPnL },
     ];
 
     renderSummary(summaryData, summaryContainer);

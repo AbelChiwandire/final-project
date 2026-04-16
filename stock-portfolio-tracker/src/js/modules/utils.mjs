@@ -70,12 +70,7 @@ export async function loadHeaderFooter() {
 // ----------------------------------------------------
 
 export function getToneClass(label, value) {
-  const toneLabels = new Set([
-    "Change",
-    "PnL",
-    "Return %",
-    "percentageChange"
-  ]);
+  const toneLabels = new Set(["Change", "PnL", "Return %", "percentageChange"]);
 
   if (!toneLabels.has(label)) return "tone-neutral";
 
@@ -122,7 +117,7 @@ export function formatPrice(value, options = {}) {
   if (!Number.isFinite(number)) return EMPTY_DISPLAY;
   if (number === 0 && !allowZero) return EMPTY_DISPLAY;
 
-  return `$${number.toLocaleString('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals })}`;
+  return `$${number.toLocaleString("en-US", { minimumFractionDigits: decimals, maximumFractionDigits: decimals })}`;
 }
 
 export function displayValue(value) {
@@ -167,11 +162,11 @@ export function applyImageFallback(imgEl, fallbackText = "N/A") {
 }
 
 export function setRotatingClass(btn) {
-  if(!btn) return;
+  if (!btn) return;
   btn.classList.add("is-rotating");
 }
 
 export function removeRotatingClass(btn) {
-  if(!btn) return;
+  if (!btn) return;
   btn.classList.remove("is-rotating");
 }

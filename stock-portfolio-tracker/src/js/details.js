@@ -1,7 +1,14 @@
-import { loadHeaderFooter, setRotatingClass, removeRotatingClass } from "./modules/utils.mjs";
+import {
+  loadHeaderFooter,
+  setRotatingClass,
+  removeRotatingClass,
+} from "./modules/utils.mjs";
 import PortfolioManager from "./modules/PortfolioManager.mjs";
 import { renderStockDetailsHeader } from "./UI/renderStockDetailsHeader.mjs";
-import { renderStockDetails, startAutoRefresh } from "./UI/renderStockDetails.mjs";
+import {
+  renderStockDetails,
+  startAutoRefresh,
+} from "./UI/renderStockDetails.mjs";
 import { User } from "./modules/auth.mjs";
 import { getUserTheme } from "./modules/themeStorage.mjs";
 
@@ -27,6 +34,12 @@ function getSymbolFromURL() {
 const symbol = getSymbolFromURL();
 
 renderStockDetailsHeader(symbol, "details-header-root", portfolioManager);
+const containers = {
+  profileContainerEl: document.getElementById("stock-profile-container"),
+  metricsContainerEl: document.getElementById("stock-metrics"),
+  analyticsContainerEl: document.getElementById("stock-analytics"),
+  newsContainerEl: document.getElementById("stock-news-container"),
+};
 
 const btn = document.querySelector("#refresh-btn svg");
 if (btn) {
@@ -43,7 +56,7 @@ if (btn) {
       removeRotatingClass(btn);
     }
   });
-}  
+}
 
 // -----------------------------
 // Main
@@ -51,15 +64,8 @@ if (btn) {
 (async () => {
   await loadHeaderFooter();
 
-  const containers = {
-    profileContainerEl: document.getElementById("stock-profile-container"),
-    metricsContainerEl: document.getElementById("stock-metrics"),
-    analyticsContainerEl: document.getElementById("stock-analytics"),
-    newsContainerEl: document.getElementById("stock-news-container")
-  };
-
   try {
-    // INITIAL LOAD 
+    // INITIAL LOAD
     setRotatingClass(btn);
     const stockDetails = await portfolioManager.getStockDetails(symbol);
 
@@ -72,9 +78,8 @@ if (btn) {
       containers,
       onRefreshStart: setRotatingClass,
       onRefreshEnd: removeRotatingClass,
-      interval: 60000
+      interval: 60000,
     });
-
   } catch (err) {
     portfolioManager.isRefreshing = false;
     console.error("Error loading stock details:", err);
