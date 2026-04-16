@@ -28,6 +28,10 @@ import { renderApp } from "./UI/renderApp.mjs";
 
     // INITIAL LOAD (only once)
     setRotatingClass(refreshBtn);
+
+    // Show loading state with skeletons
+    renderApp(portfolioManager, true);
+
     await portfolioManager.loadPortfolio();
 
     renderApp(portfolioManager);
@@ -42,6 +46,9 @@ import { renderApp } from "./UI/renderApp.mjs";
         if (portfolioManager.getRefreshState()) return;
 
         setRotatingClass(refreshBtn);
+
+        // Show loading state with skeletons
+        renderApp(portfolioManager, true);
 
         await portfolioManager.refreshPortfolio();
 
@@ -58,6 +65,9 @@ import { renderApp } from "./UI/renderApp.mjs";
       setRotatingClass(refreshBtn);
 
       try {
+        // Show loading state with skeletons
+        renderApp(portfolioManager, true);
+
         await portfolioManager.refreshPortfolio();
         renderApp(portfolioManager);
       } finally {

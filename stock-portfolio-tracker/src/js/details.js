@@ -49,6 +49,9 @@ if (btn) {
     setRotatingClass(btn);
 
     try {
+      // Show loading state with skeletons
+      renderStockDetails(null, containers, true);
+
       await portfolioManager.loadPortfolio(true);
       const stockDetails = await portfolioManager.getStockDetails(symbol, true);
       renderStockDetails(stockDetails, containers);
@@ -67,6 +70,10 @@ if (btn) {
   try {
     // INITIAL LOAD
     setRotatingClass(btn);
+
+    // Show loading state with skeletons
+    renderStockDetails(null, containers, true);
+
     const stockDetails = await portfolioManager.getStockDetails(symbol);
 
     renderStockDetails(stockDetails, containers);

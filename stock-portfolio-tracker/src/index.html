@@ -8,8 +8,28 @@
   <meta name="description"
     content="StockFolio is a Stock Portfolio tracker that helps indivuals track live market data and monitor their positions." />
   <title>StockFolio | Dashboard</title>
-  <script type="module" src="./js/index.js"></script>
+
+  <!-- Inline theme script to prevent flash -->
+  <script>
+    (function () {
+      // Get current user from localStorage
+      const currentUser = localStorage.getItem('currentUser');
+
+      if (currentUser) {
+        // Get theme for this user
+        const themeKey = 'theme:' + currentUser;
+        const theme = localStorage.getItem(themeKey) || 'light';
+
+        // Apply theme to html element immediately
+        if (theme === 'dark') {
+          document.documentElement.classList.add('dark');
+        }
+      }
+    })();
+  </script>
+
   <link rel="stylesheet" href="./css/style.css" />
+  <script type="module" src="./js/index.js"></script>
 </head>
 
 <body>

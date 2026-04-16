@@ -8,6 +8,26 @@
   <meta name="description"
     content="View key stock perfomance metrics and analytics and discover current news related to the stock." />
   <title>StockFolio | Stock Details</title>
+
+  <!-- Inline theme script to prevent flash -->
+  <script>
+    (function () {
+      // Get current user from localStorage
+      const currentUser = localStorage.getItem('currentUser');
+
+      if (currentUser) {
+        // Get theme for this user
+        const themeKey = 'theme:' + currentUser;
+        const theme = localStorage.getItem(themeKey) || 'light';
+
+        // Apply theme to html element immediately
+        if (theme === 'dark') {
+          document.documentElement.classList.add('dark');
+        }
+      }
+    })();
+  </script>
+
   <link rel="stylesheet" href="../css/style.css" />
   <script type="module" src="../js/details.js"></script>
 </head>
