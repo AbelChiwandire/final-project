@@ -1,67 +1,61 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="author" content="Abel Chiwandire" />
-    <meta
-      name="description"
-      content="View key stock perfomance metrics and analytics and discover current news related to the stock."
-    />
-    <title>StockFolio | Stock Details</title>
-    <link rel="stylesheet" href="../css/style.css" />
-    <script type="module" src="../js/details.js"></script>
-  </head>
-  <body>
-    <header id="details-header-root" class="header"></header>
 
-    <main>
-      <div
-        id="stock-profile-container"
-        class="page-container page-section"
-      ></div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="author" content="Abel Chiwandire" />
+  <meta name="description"
+    content="View key stock perfomance metrics and analytics and discover current news related to the stock." />
+  <title>StockFolio | Stock Details</title>
+  <link rel="stylesheet" href="../css/style.css" />
+  <script type="module" src="../js/details.js"></script>
+</head>
 
-      <section id="metrics-container" class="page-container page-section">
-        <h2 class="mb-md">Key Metrics</h2>
-        <div id="stock-metrics" class="portfolio-summary shimmer-group"></div>
-      </section>
+<body>
+  <header id="details-header-root" class="header"></header>
 
-      <section id="analytics-container" class="page-container page-section">
-        <h2 class="mb-md">Analytics</h2>
-        <div id="stock-analytics" class="analytics"></div>
-      </section>
+  <main>
+    <div id="stock-profile-container" class="page-container page-section"></div>
 
-      <section id="news-container" class="page-container page-section">
-        <h2 class="mb-md">Related News</h2>
-        <div id="stock-news-container"></div>
-      </section>
+    <section id="metrics-container" class="page-container page-section">
+      <h2 class="section-title">Key Metrics</h2>
+      <div id="stock-metrics" class="portfolio-summary shimmer-group"></div>
+    </section>
 
-      <template id="news-card-template">
-        <a
-          class="news-card card-content"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <div class="news-card__main">
-            <div class="news-card__image-wrapper">
-              <img class="news-card__image" alt="News image" />
-            </div>
+    <section id="analytics-container" class="page-container page-section">
+      <h2 class="section-title">Analytics</h2>
+      <div id="stock-analytics" class="analytics"></div>
+    </section>
 
-            <div class="news-card__content">
-              <h3 class="news-card__headline"></h3>
+    <section id="news-container" class="page-container page-section">
+      <h2 class="section-title">Related News</h2>
+      <div id="stock-news-container"></div>
+    </section>
 
-              <div class="news-card__meta">
-                <span class="news-card__source"></span>
-                <span class="news-card__timestamp"></span>
-              </div>
-            </div>
+    <template id="news-card-template">
+      <a class="news-card card-content" target="_blank" rel="noopener noreferrer">
+        <div class="news-card__main">
+          <div class="news-card__image-wrapper">
+            <img class="news-card__image" alt="News image" />
           </div>
 
-          <p class="news-card__summary"></p>
-        </a>
-      </template>
-    </main>
+          <div class="news-card__content">
+            <h3 class="news-card__headline"></h3>
 
-    <footer id="footer"></footer>
-  </body>
+            <div class="news-card__meta">
+              <span class="news-card__source"></span>
+              <span class="news-card__timestamp"></span>
+            </div>
+          </div>
+        </div>
+
+        <p class="news-card__summary"></p>
+      </a>
+    </template>
+  </main>
+
+  <footer id="footer"></footer>
+</body>
+
 </html>
