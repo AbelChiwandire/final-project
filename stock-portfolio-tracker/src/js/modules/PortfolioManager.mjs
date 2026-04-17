@@ -101,7 +101,6 @@ export default class PortfolioManager {
     }, {});
 
     this.hasLoaded = true;
-    console.log("Portfolio loaded with data:", this.cache);
     return this.getPortfolio();
   }
 

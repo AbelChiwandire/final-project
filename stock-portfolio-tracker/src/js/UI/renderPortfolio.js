@@ -13,8 +13,6 @@ export function renderPortfolio(portfolioData, container) {
       : container;
   if (!containerEl) return;
 
-  console.log("Rendering portfolio with data:", portfolioData);
-
   const cardsHTML = portfolioData
     .map((item) => {
       const price = formatPrice(item.currentPrice, { allowZero: false });
