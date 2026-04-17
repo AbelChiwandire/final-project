@@ -170,3 +170,38 @@ export function removeRotatingClass(btn) {
   if (!btn) return;
   btn.classList.remove("is-rotating");
 }
+
+// Error state utilities
+export function renderErrorState(container, message = "Failed to load data", showRetry = true) {
+  if (!container) return;
+
+  container.innerHTML = `
+    <div class="error-state">
+      <div class="error-icon">!</div>
+      <div class="error-message">${message}</div>
+      ${showRetry ? '<div class="error-hint">Try refreshing to load data</div>' : ''}
+    </div>
+  `;
+}
+
+export function hasApiFailures(stockDetails) {
+  // Check if any major API calls failed
+  return stockDetails?.fetchFailed ||
+    Object.keys(stockDetails || {}).some(key => {
+      const value = stockDetails[key];
+      return typeof value === 'object' && value !== null &&
+        (value.status === 'error' || value.fetchFailed);
+    });
+}
+
+export function getFailedDataSources(stockDetails) {
+  const failed = [];
+
+  if (stockDetails?.fetchFailed) failed.push('Price Data');
+  if (!stockDetails?.profile?.companyName && !stockDetails?.profile?.logo) failed.push('Company Profile');
+  if (!stockDetails?.metrics?.peRatio && !stockDetails?.metrics?.grossMargin) failed.push('Financial Metrics');
+  if (!stockDetails?.growth?.revenueGrowth) failed.push('Growth Data');
+  if (!stockDetails?.quote?.yearHigh && !stockDetails?.quote?.yearLow) failed.push('52W Data');
+
+  return failed;
+}

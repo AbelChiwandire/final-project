@@ -6,12 +6,26 @@ import {
   displayValue,
   applyImageFallback,
   getToneClass,
+  renderErrorState,
+  hasApiFailures,
+  getFailedDataSources,
 } from "../modules/utils.mjs";
 
 export function renderStockProfile(data, containerEl) {
   if (!containerEl) return;
 
   containerEl.innerHTML = "";
+
+  // Check for API failures and show error state if needed
+  if (hasApiFailures(data)) {
+    const failedSources = getFailedDataSources(data);
+    const message = failedSources.length > 1
+      ? `Failed to load: ${failedSources.join(', ')}`
+      : `Failed to load ${failedSources[0]}`;
+
+    renderErrorState(containerEl, message);
+    return;
+  }
 
   const profile = data?.profile || {};
 

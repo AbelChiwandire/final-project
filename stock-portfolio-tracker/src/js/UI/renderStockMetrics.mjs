@@ -1,7 +1,24 @@
 import { renderSummary } from "./renderSummary.js";
-import { formatNumber, formatPercent, formatPrice } from "../modules/utils.mjs";
+import { formatNumber, formatPercent, formatPrice, renderErrorState, hasApiFailures, getFailedDataSources } from "../modules/utils.mjs";
 
 export function renderStockMetrics(stockDetails, containerEl) {
+  // Check for API failures and show error state if needed
+  if (hasApiFailures(stockDetails)) {
+    const failedSources = getFailedDataSources(stockDetails);
+    const metricsFailures = failedSources.filter(source =>
+      ['Financial Metrics', '52W Data'].includes(source)
+    );
+
+    if (metricsFailures.length > 0) {
+      const message = metricsFailures.length > 1
+        ? `Failed to load: ${metricsFailures.join(', ')}`
+        : `Failed to load ${metricsFailures[0]}`;
+
+      renderErrorState(containerEl, message);
+      return;
+    }
+  }
+
   const metricsData = [
     { label: "P/E Ratio", value: formatNumber(stockDetails.metrics?.peRatio) },
     {
