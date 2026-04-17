@@ -43,7 +43,7 @@
   --primary-cta: 0 0% 100%;
   --accent-border: 190 90% 55%;
   --danger: 0 100% 80%;
-  --shimmer-highlight: rgba(255, 255, 255, 0.14);
+  --shimmer-highlight: rgba(255, 255, 255, 0.05);
 }
 
 /* =========================

@@ -99,10 +99,10 @@ export function renderStockProfile(data, containerEl) {
       hasMarketValue && hasCostBasis ? data.marketValue - data.costBasis : null;
 
     const summaryData = [
-      { label: "Shares Held", value: data?.quantity },
-      { label: "Avg Cost", value: data?.avgCost },
-      { label: "Market Value", value: data?.marketValue },
-      { label: "Total P&L", value: totalPnL },
+      { label: "Shares Held", value: data?.quantity, type: "number" },
+      { label: "Avg Cost", value: data?.avgCost, type: "currency" },
+      { label: "Market Value", value: data?.marketValue, type: "currency" },
+      { label: "Total P&L", value: totalPnL, type: "currency" },
     ];
 
     renderSummary(summaryData, summaryContainer);
