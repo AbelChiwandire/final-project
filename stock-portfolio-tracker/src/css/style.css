@@ -798,6 +798,108 @@ button svg {
   transition: color 0.2s ease;
 }
 
+/* Form validation styles */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 12px;
+}
+
+.password-input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-input-container input {
+  width: 100%;
+  padding-right: 40px;
+  /* Space for the toggle button */
+}
+
+.password-toggle {
+  position: absolute;
+  right: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: hsl(var(--text));
+  opacity: 0.5;
+  transition: opacity 0.2s ease, color 0.2s ease;
+}
+
+.password-toggle:hover {
+  opacity: 0.8;
+}
+
+.password-toggle.active {
+  opacity: 1;
+  color: hsl(var(--primary));
+}
+
+.validation-message {
+  font-size: 0.875rem;
+  margin-top: 4px;
+  min-height: 1.2em;
+  color: hsl(var(--danger));
+}
+
+.validation-message.success {
+  color: hsl(var(--primary));
+}
+
+.input-error {
+  border-color: hsl(var(--danger)) !important;
+  box-shadow: 0 0 0 1px hsl(var(--danger));
+}
+
+.input-success {
+  border-color: hsl(var(--primary)) !important;
+  box-shadow: 0 0 0 1px hsl(var(--primary));
+}
+
+.password-requirements {
+  font-size: 0.75rem;
+  margin-top: 8px;
+  padding: 8px;
+  background: hsl(var(--muted));
+  border-radius: 4px;
+  border: 1px solid hsl(var(--border));
+}
+
+.requirement {
+  display: flex;
+  align-items: center;
+  margin-bottom: 2px;
+  color: hsl(var(--text));
+  opacity: 0.6;
+  transition: opacity 0.2s ease;
+}
+
+.requirement:last-child {
+  margin-bottom: 0;
+}
+
+.requirement.met {
+  opacity: 1;
+  color: hsl(var(--primary));
+}
+
+.requirement-icon {
+  margin-right: 6px;
+  font-weight: bold;
+}
+
+.requirement.met .requirement-icon::before {
+  content: "×";
+  color: hsl(var(--primary));
+}
+
 .modal-danger:hover {
   background: #8f0808;
 }

@@ -27,7 +27,7 @@ function saveUsers(users) {
   }
 }
 
-function getUsernameIndex() {
+export function getUsernameIndex() {
   try {
     const raw = localStorage.getItem(USERNAME_INDEX_KEY);
     return raw ? JSON.parse(raw) : {};

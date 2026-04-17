@@ -5,6 +5,13 @@ import { User } from "../modules/auth.mjs";
 import { getUserTheme, setUserTheme } from "./themeStorage.mjs";
 import { settingsTemplate } from "../UI/templates.mjs";
 import { openModal } from "./modal.mjs";
+import {
+  validatePassword,
+  checkUsernameAvailability,
+  showValidationMessage,
+  clearValidationMessage,
+  updatePasswordRequirements
+} from "./validation.mjs";
 
 let portfolioManager = new PortfolioManager(User.getCurrentUserId() || null);
 
@@ -50,8 +57,23 @@ export function openAddStockModal(position = null) {
 export function openAuthModal() {
   openFormModal(authTemplate, async (elements, closeModal) => {
     const { username, password, action } = elements;
+    const isSignUp = action.value === "signup";
 
-    // Handle switching between Sign In / Sign Up
+    // Clear previous validation messages
+    clearValidationMessage(username, document.getElementById('username-validation'));
+    clearValidationMessage(password, document.getElementById('password-validation'));
+
+    // Validate based on mode
+    if (isSignUp) {
+      // Validate password strength for sign up
+      const passwordValidation = validatePassword(password.value);
+      if (!passwordValidation.isValid) {
+        showValidationMessage(password, document.getElementById('password-validation'), 'Password does not meet requirements');
+        return;
+      }
+    }
+
+    // Handle authentication
     const user = new User(username.value, password.value);
     let result;
 
@@ -62,7 +84,15 @@ export function openAuthModal() {
     }
 
     if (!result.success) {
-      alert(result.error);
+      // Show inline validation messages based on error type
+      if (result.error.includes("Username")) {
+        showValidationMessage(username, document.getElementById('username-validation'), result.error);
+      } else if (result.error.includes("password") || result.error.includes("Password")) {
+        showValidationMessage(password, document.getElementById('password-validation'), result.error);
+      } else {
+        // General error - show on password field as it's more prominent
+        showValidationMessage(password, document.getElementById('password-validation'), result.error);
+      }
       return;
     }
 
@@ -74,24 +104,88 @@ export function openAuthModal() {
     // Close modal and re-render app state
     closeModal();
     document.dispatchEvent(new CustomEvent("portfolioUpdated"));
-  });
+  }, {
+    onInit: (elements) => {
+      const form = document.querySelector("#modal-root #auth-form");
+      if (!form) return;
 
-  const form = document.querySelector("#modal-root #auth-form");
-  if (!form) return;
+      const usernameInput = form.querySelector('[name="username"]');
+      const passwordInput = form.querySelector('[name="password"]');
+      const usernameValidation = document.getElementById('username-validation');
+      const passwordValidation = document.getElementById('password-validation');
+      const passwordRequirements = document.getElementById('password-requirements');
+      const passwordToggle = document.getElementById('password-toggle');
+      const actionInput = form.querySelector('[name="action"]');
 
-  const switchBtn = form.querySelector("#switch-action");
-  const actionInput = form.querySelector('[name="action"]');
-  const submitBtn = form.querySelector('button[type="submit"]');
+      // Password visibility toggle
+      passwordToggle.addEventListener('click', () => {
+        const isPassword = passwordInput.type === 'password';
+        passwordInput.type = isPassword ? 'text' : 'password';
+        passwordToggle.classList.toggle('active', isPassword);
+      });
 
-  switchBtn.addEventListener("click", () => {
-    if (actionInput.value === "signin") {
-      actionInput.value = "signup";
-      submitBtn.textContent = "Create Account";
-      switchBtn.innerHTML = `Already have an account? <span class="modal-link-text">Sign In</span>`;
-    } else {
-      actionInput.value = "signin";
-      submitBtn.textContent = "Log In";
-      switchBtn.innerHTML = `Do not have an account? <span class="modal-link-text">Sign Up</span>`;
+      // Username validation for sign up
+      usernameInput.addEventListener('input', () => {
+        if (actionInput.value === "signup") {
+          checkUsernameAvailability(usernameInput.value, (result) => {
+            if (usernameInput.value.trim().length > 0) {
+              showValidationMessage(usernameInput, usernameValidation, result.message, !result.available);
+            } else {
+              clearValidationMessage(usernameInput, usernameValidation);
+            }
+          });
+        } else {
+          clearValidationMessage(usernameInput, usernameValidation);
+        }
+      });
+
+      // Password validation for sign up
+      passwordInput.addEventListener('input', () => {
+        if (actionInput.value === "signup") {
+          const isValid = updatePasswordRequirements(passwordInput.value, passwordRequirements);
+          if (passwordInput.value.length > 0) {
+            showValidationMessage(passwordInput, passwordValidation, isValid ? 'Strong password' : 'Password does not meet requirements', !isValid);
+          } else {
+            clearValidationMessage(passwordInput, passwordValidation);
+          }
+        } else {
+          clearValidationMessage(passwordInput, passwordValidation);
+        }
+      });
+
+      // Handle mode switching
+      const switchBtn = form.querySelector("#switch-action");
+      const submitBtn = form.querySelector('button[type="submit"]');
+
+      switchBtn.addEventListener("click", () => {
+        if (actionInput.value === "signin") {
+          actionInput.value = "signup";
+          submitBtn.textContent = "Create Account";
+          switchBtn.innerHTML = `Already have an account? <span class="modal-link-text">Sign In</span>`;
+          passwordRequirements.style.display = 'block';
+
+          // Clear validation and check current inputs
+          clearValidationMessage(usernameInput, usernameValidation);
+          clearValidationMessage(passwordInput, passwordValidation);
+
+          // Trigger validation for current values
+          if (usernameInput.value.trim().length > 0) {
+            usernameInput.dispatchEvent(new Event('input'));
+          }
+          if (passwordInput.value.length > 0) {
+            passwordInput.dispatchEvent(new Event('input'));
+          }
+        } else {
+          actionInput.value = "signin";
+          submitBtn.textContent = "Log In";
+          switchBtn.innerHTML = `Do not have an account? <span class="modal-link-text">Sign Up</span>`;
+          passwordRequirements.style.display = 'none';
+
+          // Clear validation messages for sign in mode
+          clearValidationMessage(usernameInput, usernameValidation);
+          clearValidationMessage(passwordInput, passwordValidation);
+        }
+      });
     }
   });
 }
