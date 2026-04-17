@@ -192,6 +192,10 @@ export default class PortfolioManager {
     ];
   }
 
+  async validateSymbol(symbol) {
+    return await stockData.validateSymbol(symbol);
+  }
+
   async refreshPortfolio() {
     if (this.isRefreshing) return;
 
@@ -288,10 +292,10 @@ export default class PortfolioManager {
       finnhubData.currentPrice != null
         ? this.computePositionValues(position, finnhubData.currentPrice)
         : {
-            marketValue: null,
-            costBasis: null,
-            totalPnL: null,
-          };
+          marketValue: null,
+          costBasis: null,
+          totalPnL: null,
+        };
 
     const result = {
       symbol,

@@ -67,6 +67,31 @@ export default class StockData {
   // DATA FETCHING
   // ---------------------------
 
+  async validateSymbol(symbol) {
+    try {
+      const response = await fetch(
+        `https://finnhub.io/api/v1/quote?symbol=${symbol}&token=${API_KEY}`,
+      );
+
+      if (!response.ok) {
+        return { valid: false, error: "Symbol not found" };
+      }
+
+      const data = await this.convertToJson(response);
+
+      // Check if the response contains valid data
+      // Finnhub returns null values for invalid symbols
+      if (data.c === null && data.h === null && data.l === null) {
+        return { valid: false, error: "Invalid stock symbol" };
+      }
+
+      return { valid: true };
+    } catch (error) {
+      console.error("Error validating symbol:", error);
+      return { valid: false, error: "Failed to validate symbol" };
+    }
+  }
+
   async getData(symbol) {
     try {
       const response = await fetch(

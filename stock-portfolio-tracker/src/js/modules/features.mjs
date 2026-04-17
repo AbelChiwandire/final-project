@@ -25,18 +25,66 @@ export function openAddStockModal(position = null) {
     addStockTemplate,
     async (elements, closeModal) => {
       const { symbol, shares, avgCost, companyName } = elements;
+      const submitBtn = elements.form?.querySelector('button[type="submit"]');
 
-      portfolioManager.setPosition(
-        symbol.value.toUpperCase(),
-        Number(shares.value),
-        Number(avgCost.value),
-        companyName.value,
-      );
+      try {
+        // Validate symbol first
+        const validation = await portfolioManager.validateSymbol(symbol.value.toUpperCase());
 
-      await portfolioManager.loadPortfolio();
+        if (!validation.valid) {
+          // Show error message to user
+          const errorDiv = document.createElement('div');
+          errorDiv.className = 'validation-error';
+          errorDiv.textContent = validation.error;
+          errorDiv.style.cssText = 'color: #ef4444; font-size: 14px; margin-top: 8px;';
 
-      closeModal();
-      document.dispatchEvent(new CustomEvent("portfolioUpdated"));
+          // Remove existing error message
+          const existingError = symbol.parentElement.querySelector('.validation-error');
+          if (existingError) existingError.remove();
+
+          // Add new error message
+          symbol.parentElement.appendChild(errorDiv);
+          symbol.style.borderColor = '#ef4444';
+
+          // Reset after 3 seconds
+          setTimeout(() => {
+            errorDiv.remove();
+            symbol.style.borderColor = '';
+          }, 3000);
+
+          return;
+        }
+
+        // If validation passes, add the position
+        portfolioManager.setPosition(
+          symbol.value.toUpperCase(),
+          Number(shares.value),
+          Number(avgCost.value),
+          companyName.value,
+        );
+
+        await portfolioManager.loadPortfolio();
+
+        closeModal();
+        document.dispatchEvent(new CustomEvent("portfolioUpdated"));
+      } catch (error) {
+        console.error('Error adding stock:', error);
+
+        // Show generic error message
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'validation-error';
+        errorDiv.textContent = 'Failed to add stock. Please try again.';
+        errorDiv.style.cssText = 'color: #ef4444; font-size: 14px; margin-top: 8px;';
+
+        const existingError = submitBtn.parentElement.querySelector('.validation-error');
+        if (existingError) existingError.remove();
+
+        submitBtn.parentElement.appendChild(errorDiv);
+
+        setTimeout(() => {
+          errorDiv.remove();
+        }, 3000);
+      }
     },
     {
       onInit: (elements) => {
@@ -48,6 +96,13 @@ export function openAddStockModal(position = null) {
           elements.symbol.disabled = true;
           elements.companyName.disabled = true;
         }
+
+        // Clear validation errors on input
+        elements.symbol.addEventListener('input', () => {
+          elements.symbol.style.borderColor = '';
+          const existingError = elements.symbol.parentElement.querySelector('.validation-error');
+          if (existingError) existingError.remove();
+        });
       },
     },
   );
