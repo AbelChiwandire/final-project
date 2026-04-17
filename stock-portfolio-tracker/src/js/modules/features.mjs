@@ -63,9 +63,12 @@ export function openAddStockModal(position = null) {
           companyName.value,
         );
 
-        await portfolioManager.loadPortfolio();
+        // Force reload portfolio to ensure cache is updated
+        await portfolioManager.loadPortfolio(true);
 
         closeModal();
+
+        // Ensure portfolio data is available before dispatching event
         document.dispatchEvent(new CustomEvent("portfolioUpdated"));
       } catch (error) {
         console.error('Error adding stock:', error);
@@ -160,8 +163,6 @@ export function openAuthModal() {
     closeModal();
 
     // Ensure portfolio is fully loaded before dispatching events
-    const portfolio = portfolioManager.getPortfolio();
-    console.log('Login complete, portfolio data:', portfolio);
 
     // Force immediate render to ensure portfolio loads after login
     document.dispatchEvent(new CustomEvent("portfolioUpdated"));

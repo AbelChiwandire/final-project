@@ -27,9 +27,6 @@ export function renderApp(portfolioManager, isLoading = false) {
   const portfolio = portfolioManager.getPortfolio();
   const summary = portfolioManager.getPortfolioSummary();
 
-  // Debug logging to understand state
-  console.log('renderApp called:', { user, portfolioLength: portfolio?.length, portfolio, isLoading });
-
   // -----------------------------
   // Theme handling
   // -----------------------------
