@@ -4,8 +4,8 @@ import StockData from "./../api/StockData.mjs";
 const stockData = new StockData();
 
 export default class PortfolioManager {
-  constructor(userId) {
-    this.userId = userId;
+  constructor(userId = null) {
+    this._userId = userId;
     this.cache = {};
     this.hasLoaded = false;
     this.isRefreshing = false;
@@ -20,6 +20,21 @@ export default class PortfolioManager {
       change: 0,
       timestamp: 0,
     };
+  }
+
+  set userId(newUserId) {
+    // Reset loading state when user changes
+    if (this._userId !== newUserId) {
+      this.hasLoaded = false;
+      this.cache = {};
+      this.detailsCache = {};
+      this.fmpCache = {};
+    }
+    this._userId = newUserId;
+  }
+
+  get userId() {
+    return this._userId;
   }
 
   validateField(key, value) {

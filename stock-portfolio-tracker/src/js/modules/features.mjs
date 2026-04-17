@@ -22,7 +22,7 @@ export function setPortfolioManager(manager) {
 // ---- Portfolio Modal ----
 export function openAddStockModal(position = null) {
   openFormModal(
-    addStockTemplate,
+    () => addStockTemplate(!!position),
     async (elements, closeModal) => {
       const { symbol, shares, avgCost, companyName } = elements;
       const submitBtn = elements.form?.querySelector('button[type="submit"]');
@@ -158,7 +158,18 @@ export function openAuthModal() {
 
     // Close modal and re-render app state
     closeModal();
+
+    // Ensure portfolio is fully loaded before dispatching events
+    const portfolio = portfolioManager.getPortfolio();
+    console.log('Login complete, portfolio data:', portfolio);
+
+    // Force immediate render to ensure portfolio loads after login
     document.dispatchEvent(new CustomEvent("portfolioUpdated"));
+
+    // Also trigger immediate render for login flow specifically
+    setTimeout(() => {
+      document.dispatchEvent(new CustomEvent("portfolioUpdated"));
+    }, 10);
   }, {
     onInit: (elements) => {
       const form = document.querySelector("#modal-root #auth-form");

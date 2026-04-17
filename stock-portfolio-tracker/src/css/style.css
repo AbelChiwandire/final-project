@@ -741,6 +741,7 @@ button svg {
 
 .modal input,
 .modal select {
+  width: 100%;
   padding: 8px;
   border-radius: 6px;
   border: 1px solid hsl(var(--border));
@@ -798,12 +799,7 @@ button svg {
   transition: color 0.2s ease;
 }
 
-/* Form validation styles */
-.form-group {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 12px;
-}
+/* Form validation styles - remove duplicate to fix spacing */
 
 .password-input-container {
   position: relative;

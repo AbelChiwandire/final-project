@@ -98,7 +98,7 @@ export function startAutoRefresh({
   containers,
   onRefreshStart,
   onRefreshEnd,
-  interval = 60000,
+  interval = 600000,
 }) {
   return setInterval(async () => {
     // prevent overlapping refresh cycles

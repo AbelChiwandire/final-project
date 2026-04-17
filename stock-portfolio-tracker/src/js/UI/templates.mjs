@@ -1,9 +1,9 @@
-export function addStockTemplate() {
+export function addStockTemplate(isEdit = false) {
   return `
     <div class="modal-panel">
 
       <div class="modal-header">
-        <h2>Add Stock</h2>
+        <h2>${isEdit ? 'Edit Stock' : 'Add Stock'}</h2>
         <button class="modal-close">&times;</button>
       </div>
 
@@ -30,7 +30,7 @@ export function addStockTemplate() {
 
         <div class="modal-actions">
           <button type="button" class="modal-cancel">Cancel</button>
-          <button type="submit" class="button-primary animated-border cta">Add Stock</button>
+          <button type="submit" class="button-primary animated-border cta">${isEdit ? 'Edit Stock' : 'Add Stock'}</button>
         </div>
       </form>
 
