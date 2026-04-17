@@ -140,6 +140,7 @@ footer {
   padding-right: 12px;
 }
 
+
 .py-sm {
   padding-top: 6px;
   padding-bottom: 6px;
@@ -147,6 +148,10 @@ footer {
 
 .mb-md {
   margin-bottom: 12px;
+}
+
+.ml-sm {
+  margin-left: 6px;
 }
 
 .margin-top {
@@ -885,7 +890,6 @@ body.modal-open {
    STOCK DETAILS HEADER
 ========================= */
 
-.details-back-btn,
 .details-refresh-btn {
   background: transparent;
   border: 1px solid var(--border);
@@ -894,19 +898,41 @@ body.modal-open {
   color: hsl(var(--text));
 }
 
-.details-back-btn:hover,
 .details-refresh-btn:hover {
   background: rgba(0, 0, 0, 0.05);
 }
 
-.dark .details-back-btn:hover,
 .dark .details-refresh-btn:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.details-back-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  padding: 6px 16px;
+  border-radius: var(--radius);
+  color: hsl(var(--text));
+}
+
+.details-back-btn:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.dark .details-back-btn:hover {
   background: rgba(255, 255, 255, 0.06);
 }
 
 .details-symbol {
   font-weight: 600;
   color: hsl(var(--text));
+}
+
+.details-slash {
+  margin: 0 16px;
+}
+
+.details-symbol-text {
+  margin-left: 16px;
 }
 
 /* =========================
@@ -1078,6 +1104,7 @@ body.modal-open {
 
   display: -webkit-box;
   -webkit-line-clamp: 3;
+  line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -1123,6 +1150,9 @@ body.modal-open {
   z-index: -1;
 
   /* mask so it looks like border only */
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
   -webkit-mask:
     linear-gradient(#000 0 0) content-box,
     linear-gradient(#000 0 0);

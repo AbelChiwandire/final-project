@@ -22,7 +22,7 @@ export function renderStockProfile(data, containerEl) {
     <div class="profile-header page-container page-section">
       
       <div class="profile-left">
-        <img class="profile-logo" src="${profile.logo || ""}" />
+        <img class="profile-logo" src="${profile.logo || ""}" alt="${displayValue(profile.companyName) || displayValue(data?.symbol) || 'Company logo'}" />
 
         <div class="profile-text">
           <div class="profile-title-row">
@@ -45,11 +45,10 @@ export function renderStockProfile(data, containerEl) {
 
       <div class="profile-right">
         <div class="profile-price">
-          ${
-            data?.currentPrice != null
-              ? `${formatPrice(data.currentPrice, { allowZero: false })}`
-              : "-"
-          }
+          ${data?.currentPrice != null
+      ? `${formatPrice(data.currentPrice, { allowZero: false })}`
+      : "-"
+    }
         </div>
         <div class="profile-change">-</div>
       </div>
