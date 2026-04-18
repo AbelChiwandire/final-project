@@ -1,5 +1,9 @@
 import { renderSummary } from "./renderSummary.js";
-import { renderErrorState, hasApiFailures, getFailedDataSources } from "../modules/utils.mjs";
+import {
+  renderErrorState,
+  hasApiFailures,
+  getFailedDataSources,
+} from "../modules/utils.mjs";
 
 export function renderAnalytics(stockDetails, containerEl) {
   if (!containerEl) return;
@@ -7,14 +11,15 @@ export function renderAnalytics(stockDetails, containerEl) {
   // Check for API failures and show error state if needed
   if (hasApiFailures(stockDetails)) {
     const failedSources = getFailedDataSources(stockDetails);
-    const analyticsFailures = failedSources.filter(source =>
-      ['Price Data', '52W Data', 'Growth Data'].includes(source)
+    const analyticsFailures = failedSources.filter((source) =>
+      ["Price Data", "52W Data", "Growth Data"].includes(source),
     );
 
     if (analyticsFailures.length > 0) {
-      const message = analyticsFailures.length > 1
-        ? `Failed to load: ${analyticsFailures.join(', ')}`
-        : `Failed to load ${analyticsFailures[0]}`;
+      const message =
+        analyticsFailures.length > 1
+          ? `Failed to load: ${analyticsFailures.join(", ")}`
+          : `Failed to load ${analyticsFailures[0]}`;
 
       renderErrorState(containerEl, message);
       return;
@@ -44,9 +49,7 @@ export function renderAnalytics(stockDetails, containerEl) {
 
   // NEW: Distance from 52W Low - shows upside potential
   const distanceFromLow =
-    yearLow && currentPrice
-      ? ((currentPrice - yearLow) / yearLow) * 100
-      : null;
+    yearLow && currentPrice ? ((currentPrice - yearLow) / yearLow) * 100 : null;
 
   // NEW: PEG Ratio - valuation vs growth (combines FMP metrics + Finnhub data)
   const peRatio = stockDetails.metrics?.peRatio ?? null;

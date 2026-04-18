@@ -10,7 +10,7 @@ import {
   checkUsernameAvailability,
   showValidationMessage,
   clearValidationMessage,
-  updatePasswordRequirements
+  updatePasswordRequirements,
 } from "./validation.mjs";
 
 let portfolioManager = new PortfolioManager(User.getCurrentUserId() || null);
@@ -29,27 +29,31 @@ export function openAddStockModal(position = null) {
 
       try {
         // Validate symbol first
-        const validation = await portfolioManager.validateSymbol(symbol.value.toUpperCase());
+        const validation = await portfolioManager.validateSymbol(
+          symbol.value.toUpperCase(),
+        );
 
         if (!validation.valid) {
           // Show error message to user
-          const errorDiv = document.createElement('div');
-          errorDiv.className = 'validation-error';
+          const errorDiv = document.createElement("div");
+          errorDiv.className = "validation-error";
           errorDiv.textContent = validation.error;
-          errorDiv.style.cssText = 'color: #ef4444; font-size: 14px; margin-top: 8px;';
+          errorDiv.style.cssText =
+            "color: #ef4444; font-size: 14px; margin-top: 8px;";
 
           // Remove existing error message
-          const existingError = symbol.parentElement.querySelector('.validation-error');
+          const existingError =
+            symbol.parentElement.querySelector(".validation-error");
           if (existingError) existingError.remove();
 
           // Add new error message
           symbol.parentElement.appendChild(errorDiv);
-          symbol.style.borderColor = '#ef4444';
+          symbol.style.borderColor = "#ef4444";
 
           // Reset after 3 seconds
           setTimeout(() => {
             errorDiv.remove();
-            symbol.style.borderColor = '';
+            symbol.style.borderColor = "";
           }, 3000);
 
           return;
@@ -71,15 +75,17 @@ export function openAddStockModal(position = null) {
         // Ensure portfolio data is available before dispatching event
         document.dispatchEvent(new CustomEvent("portfolioUpdated"));
       } catch (error) {
-        console.error('Error adding stock:', error);
+        console.error("Error adding stock:", error);
 
         // Show generic error message
-        const errorDiv = document.createElement('div');
-        errorDiv.className = 'validation-error';
-        errorDiv.textContent = 'Failed to add stock. Please try again.';
-        errorDiv.style.cssText = 'color: #ef4444; font-size: 14px; margin-top: 8px;';
+        const errorDiv = document.createElement("div");
+        errorDiv.className = "validation-error";
+        errorDiv.textContent = "Failed to add stock. Please try again.";
+        errorDiv.style.cssText =
+          "color: #ef4444; font-size: 14px; margin-top: 8px;";
 
-        const existingError = submitBtn.parentElement.querySelector('.validation-error');
+        const existingError =
+          submitBtn.parentElement.querySelector(".validation-error");
         if (existingError) existingError.remove();
 
         submitBtn.parentElement.appendChild(errorDiv);
@@ -101,9 +107,10 @@ export function openAddStockModal(position = null) {
         }
 
         // Clear validation errors on input
-        elements.symbol.addEventListener('input', () => {
-          elements.symbol.style.borderColor = '';
-          const existingError = elements.symbol.parentElement.querySelector('.validation-error');
+        elements.symbol.addEventListener("input", () => {
+          elements.symbol.style.borderColor = "";
+          const existingError =
+            elements.symbol.parentElement.querySelector(".validation-error");
           if (existingError) existingError.remove();
         });
       },
@@ -113,148 +120,198 @@ export function openAddStockModal(position = null) {
 
 // ---- Auth Modal ----
 export function openAuthModal() {
-  openFormModal(authTemplate, async (elements, closeModal) => {
-    const { username, password, action } = elements;
-    const isSignUp = action.value === "signup";
+  openFormModal(
+    authTemplate,
+    async (elements, closeModal) => {
+      const { username, password, action } = elements;
+      const isSignUp = action.value === "signup";
 
-    // Clear previous validation messages
-    clearValidationMessage(username, document.getElementById('username-validation'));
-    clearValidationMessage(password, document.getElementById('password-validation'));
+      // Clear previous validation messages
+      clearValidationMessage(
+        username,
+        document.getElementById("username-validation"),
+      );
+      clearValidationMessage(
+        password,
+        document.getElementById("password-validation"),
+      );
 
-    // Validate based on mode
-    if (isSignUp) {
-      // Validate password strength for sign up
-      const passwordValidation = validatePassword(password.value);
-      if (!passwordValidation.isValid) {
-        showValidationMessage(password, document.getElementById('password-validation'), 'Password does not meet requirements');
+      // Validate based on mode
+      if (isSignUp) {
+        // Validate password strength for sign up
+        const passwordValidation = validatePassword(password.value);
+        if (!passwordValidation.isValid) {
+          showValidationMessage(
+            password,
+            document.getElementById("password-validation"),
+            "Password does not meet requirements",
+          );
+          return;
+        }
+      }
+
+      // Handle authentication
+      const user = new User(username.value, password.value);
+      let result;
+
+      if (action.value === "signin") {
+        result = await user.login();
+      } else {
+        result = await user.register();
+      }
+
+      if (!result.success) {
+        // Show inline validation messages based on error type
+        if (result.error.includes("Username")) {
+          showValidationMessage(
+            username,
+            document.getElementById("username-validation"),
+            result.error,
+          );
+        } else if (
+          result.error.includes("password") ||
+          result.error.includes("Password")
+        ) {
+          showValidationMessage(
+            password,
+            document.getElementById("password-validation"),
+            result.error,
+          );
+        } else {
+          // General error - show on password field as it's more prominent
+          showValidationMessage(
+            password,
+            document.getElementById("password-validation"),
+            result.error,
+          );
+        }
         return;
       }
-    }
 
-    // Handle authentication
-    const user = new User(username.value, password.value);
-    let result;
+      // Update PortfolioManager with new/current user
+      portfolioManager.userId = result.user.id;
 
-    if (action.value === "signin") {
-      result = await user.login();
-    } else {
-      result = await user.register();
-    }
+      await portfolioManager.loadPortfolio();
 
-    if (!result.success) {
-      // Show inline validation messages based on error type
-      if (result.error.includes("Username")) {
-        showValidationMessage(username, document.getElementById('username-validation'), result.error);
-      } else if (result.error.includes("password") || result.error.includes("Password")) {
-        showValidationMessage(password, document.getElementById('password-validation'), result.error);
-      } else {
-        // General error - show on password field as it's more prominent
-        showValidationMessage(password, document.getElementById('password-validation'), result.error);
-      }
-      return;
-    }
+      // Close modal and re-render app state
+      closeModal();
 
-    // Update PortfolioManager with new/current user
-    portfolioManager.userId = result.user.id;
+      // Ensure portfolio is fully loaded before dispatching events
 
-    await portfolioManager.loadPortfolio();
-
-    // Close modal and re-render app state
-    closeModal();
-
-    // Ensure portfolio is fully loaded before dispatching events
-
-    // Force immediate render to ensure portfolio loads after login
-    document.dispatchEvent(new CustomEvent("portfolioUpdated"));
-
-    // Also trigger immediate render for login flow specifically
-    setTimeout(() => {
+      // Force immediate render to ensure portfolio loads after login
       document.dispatchEvent(new CustomEvent("portfolioUpdated"));
-    }, 10);
-  }, {
-    onInit: (elements) => {
-      const form = document.querySelector("#modal-root #auth-form");
-      if (!form) return;
 
-      const usernameInput = form.querySelector('[name="username"]');
-      const passwordInput = form.querySelector('[name="password"]');
-      const usernameValidation = document.getElementById('username-validation');
-      const passwordValidation = document.getElementById('password-validation');
-      const passwordRequirements = document.getElementById('password-requirements');
-      const passwordToggle = document.getElementById('password-toggle');
-      const actionInput = form.querySelector('[name="action"]');
+      // Also trigger immediate render for login flow specifically
+      setTimeout(() => {
+        document.dispatchEvent(new CustomEvent("portfolioUpdated"));
+      }, 10);
+    },
+    {
+      onInit: (elements) => {
+        const form = document.querySelector("#modal-root #auth-form");
+        if (!form) return;
 
-      // Password visibility toggle
-      passwordToggle.addEventListener('click', () => {
-        const isPassword = passwordInput.type === 'password';
-        passwordInput.type = isPassword ? 'text' : 'password';
-        passwordToggle.classList.toggle('active', isPassword);
-      });
+        const usernameInput = form.querySelector('[name="username"]');
+        const passwordInput = form.querySelector('[name="password"]');
+        const usernameValidation = document.getElementById(
+          "username-validation",
+        );
+        const passwordValidation = document.getElementById(
+          "password-validation",
+        );
+        const passwordRequirements = document.getElementById(
+          "password-requirements",
+        );
+        const passwordToggle = document.getElementById("password-toggle");
+        const actionInput = form.querySelector('[name="action"]');
 
-      // Username validation for sign up
-      usernameInput.addEventListener('input', () => {
-        if (actionInput.value === "signup") {
-          checkUsernameAvailability(usernameInput.value, (result) => {
-            if (usernameInput.value.trim().length > 0) {
-              showValidationMessage(usernameInput, usernameValidation, result.message, !result.available);
+        // Password visibility toggle
+        passwordToggle.addEventListener("click", () => {
+          const isPassword = passwordInput.type === "password";
+          passwordInput.type = isPassword ? "text" : "password";
+          passwordToggle.classList.toggle("active", isPassword);
+        });
+
+        // Username validation for sign up
+        usernameInput.addEventListener("input", () => {
+          if (actionInput.value === "signup") {
+            checkUsernameAvailability(usernameInput.value, (result) => {
+              if (usernameInput.value.trim().length > 0) {
+                showValidationMessage(
+                  usernameInput,
+                  usernameValidation,
+                  result.message,
+                  !result.available,
+                );
+              } else {
+                clearValidationMessage(usernameInput, usernameValidation);
+              }
+            });
+          } else {
+            clearValidationMessage(usernameInput, usernameValidation);
+          }
+        });
+
+        // Password validation for sign up
+        passwordInput.addEventListener("input", () => {
+          if (actionInput.value === "signup") {
+            const isValid = updatePasswordRequirements(
+              passwordInput.value,
+              passwordRequirements,
+            );
+            if (passwordInput.value.length > 0) {
+              showValidationMessage(
+                passwordInput,
+                passwordValidation,
+                isValid
+                  ? "Strong password"
+                  : "Password does not meet requirements",
+                !isValid,
+              );
             } else {
-              clearValidationMessage(usernameInput, usernameValidation);
+              clearValidationMessage(passwordInput, passwordValidation);
             }
-          });
-        } else {
-          clearValidationMessage(usernameInput, usernameValidation);
-        }
-      });
-
-      // Password validation for sign up
-      passwordInput.addEventListener('input', () => {
-        if (actionInput.value === "signup") {
-          const isValid = updatePasswordRequirements(passwordInput.value, passwordRequirements);
-          if (passwordInput.value.length > 0) {
-            showValidationMessage(passwordInput, passwordValidation, isValid ? 'Strong password' : 'Password does not meet requirements', !isValid);
           } else {
             clearValidationMessage(passwordInput, passwordValidation);
           }
-        } else {
-          clearValidationMessage(passwordInput, passwordValidation);
-        }
-      });
+        });
 
-      // Handle mode switching
-      const switchBtn = form.querySelector("#switch-action");
-      const submitBtn = form.querySelector('button[type="submit"]');
+        // Handle mode switching
+        const switchBtn = form.querySelector("#switch-action");
+        const submitBtn = form.querySelector('button[type="submit"]');
 
-      switchBtn.addEventListener("click", () => {
-        if (actionInput.value === "signin") {
-          actionInput.value = "signup";
-          submitBtn.textContent = "Create Account";
-          switchBtn.innerHTML = `Already have an account? <span class="modal-link-text">Sign In</span>`;
-          passwordRequirements.style.display = 'block';
+        switchBtn.addEventListener("click", () => {
+          if (actionInput.value === "signin") {
+            actionInput.value = "signup";
+            submitBtn.textContent = "Create Account";
+            switchBtn.innerHTML = `Already have an account? <span class="modal-link-text">Sign In</span>`;
+            passwordRequirements.style.display = "block";
 
-          // Clear validation and check current inputs
-          clearValidationMessage(usernameInput, usernameValidation);
-          clearValidationMessage(passwordInput, passwordValidation);
+            // Clear validation and check current inputs
+            clearValidationMessage(usernameInput, usernameValidation);
+            clearValidationMessage(passwordInput, passwordValidation);
 
-          // Trigger validation for current values
-          if (usernameInput.value.trim().length > 0) {
-            usernameInput.dispatchEvent(new Event('input'));
+            // Trigger validation for current values
+            if (usernameInput.value.trim().length > 0) {
+              usernameInput.dispatchEvent(new Event("input"));
+            }
+            if (passwordInput.value.length > 0) {
+              passwordInput.dispatchEvent(new Event("input"));
+            }
+          } else {
+            actionInput.value = "signin";
+            submitBtn.textContent = "Log In";
+            switchBtn.innerHTML = `Do not have an account? <span class="modal-link-text">Sign Up</span>`;
+            passwordRequirements.style.display = "none";
+
+            // Clear validation messages for sign in mode
+            clearValidationMessage(usernameInput, usernameValidation);
+            clearValidationMessage(passwordInput, passwordValidation);
           }
-          if (passwordInput.value.length > 0) {
-            passwordInput.dispatchEvent(new Event('input'));
-          }
-        } else {
-          actionInput.value = "signin";
-          submitBtn.textContent = "Log In";
-          switchBtn.innerHTML = `Do not have an account? <span class="modal-link-text">Sign Up</span>`;
-          passwordRequirements.style.display = 'none';
-
-          // Clear validation messages for sign in mode
-          clearValidationMessage(usernameInput, usernameValidation);
-          clearValidationMessage(passwordInput, passwordValidation);
-        }
-      });
-    }
-  });
+        });
+      },
+    },
+  );
 }
 
 export function openSettingsModal() {

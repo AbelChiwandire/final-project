@@ -3,7 +3,11 @@ import { renderPortfolio } from "./renderPortfolio.js";
 import { renderSummary } from "./renderSummary.js";
 import { getFallbackTemplate } from "./templates.mjs";
 import { getUserTheme } from "../modules/themeStorage.mjs";
-import { showSkeleton, hideSkeleton, isSkeletonActive } from "../modules/skeleton.mjs";
+import {
+  showSkeleton,
+  hideSkeleton,
+  isSkeletonActive,
+} from "../modules/skeleton.mjs";
 
 function updateLastUpdated() {
   const el = document.getElementById("last-updated");
@@ -44,18 +48,26 @@ export function renderApp(portfolioManager, isLoading = false) {
     // Show 4 skeleton cards for summary
     const summaryEl = document.querySelector("#portfolio-summary");
     if (summaryEl) {
-      summaryEl.innerHTML = Array(4).fill('').map(() => `
+      summaryEl.innerHTML = Array(4)
+        .fill("")
+        .map(
+          () => `
         <div class="card-content metric-card shimmer-item">
           <div class="metric-label skeleton-text skeleton-text--small"></div>
           <div class="metric-value skeleton-text skeleton-text--large"></div>
         </div>
-      `).join('');
+      `,
+        )
+        .join("");
     }
 
     // Show 6 skeleton cards for portfolio (2 rows of 3)
     const portfolioEl = document.querySelector("#portfolio-container");
     if (user && (!portfolio || portfolio.length === 0) && portfolioEl) {
-      portfolioEl.innerHTML = Array(6).fill('').map(() => `
+      portfolioEl.innerHTML = Array(6)
+        .fill("")
+        .map(
+          () => `
         <div class="portfolio-card cursor shimmer-item">
           <div class="card-inner">
             <!-- FRONT FACE -->
@@ -144,7 +156,9 @@ export function renderApp(portfolioManager, isLoading = false) {
             </button>
           </div>
         </div>
-      `).join('');
+      `,
+        )
+        .join("");
     }
 
     // Don't render the rest of the UI while loading

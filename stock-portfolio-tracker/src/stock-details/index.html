@@ -1,81 +1,88 @@
 <!doctype html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="author" content="Abel Chiwandire" />
+    <meta
+      name="description"
+      content="View key stock perfomance metrics and analytics and discover current news related to the stock."
+    />
+    <title>StockFolio | Stock Details</title>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="author" content="Abel Chiwandire" />
-  <meta name="description"
-    content="View key stock perfomance metrics and analytics and discover current news related to the stock." />
-  <title>StockFolio | Stock Details</title>
+    <!-- Inline theme script to prevent flash -->
+    <script>
+      (function () {
+        // Get current user from localStorage
+        const currentUser = localStorage.getItem("currentUser");
 
-  <!-- Inline theme script to prevent flash -->
-  <script>
-    (function () {
-      // Get current user from localStorage
-      const currentUser = localStorage.getItem('currentUser');
+        if (currentUser) {
+          // Get theme for this user
+          const themeKey = "theme:" + currentUser;
+          const theme = localStorage.getItem(themeKey) || "light";
 
-      if (currentUser) {
-        // Get theme for this user
-        const themeKey = 'theme:' + currentUser;
-        const theme = localStorage.getItem(themeKey) || 'light';
-
-        // Apply theme to html element immediately
-        if (theme === 'dark') {
-          document.documentElement.classList.add('dark');
+          // Apply theme to html element immediately
+          if (theme === "dark") {
+            document.documentElement.classList.add("dark");
+          }
         }
-      }
-    })();
-  </script>
+      })();
+    </script>
 
-  <link rel="stylesheet" href="../css/style.css" />
-  <script type="module" src="../js/details.js"></script>
-</head>
+    <link rel="stylesheet" href="../css/style.css" />
+    <script type="module" src="../js/details.js"></script>
+  </head>
 
-<body>
-  <header id="details-header-root" class="header"></header>
+  <body>
+    <header id="details-header-root" class="header"></header>
 
-  <main>
-    <div id="stock-profile-container" class="page-container page-section"></div>
+    <main>
+      <div
+        id="stock-profile-container"
+        class="page-container page-section"
+      ></div>
 
-    <section id="metrics-container" class="page-container page-section">
-      <h2 class="section-title">Key Metrics</h2>
-      <div id="stock-metrics" class="portfolio-summary shimmer-group"></div>
-    </section>
+      <section id="metrics-container" class="page-container page-section">
+        <h2 class="section-title">Key Metrics</h2>
+        <div id="stock-metrics" class="portfolio-summary shimmer-group"></div>
+      </section>
 
-    <section id="analytics-container" class="page-container page-section">
-      <h2 class="section-title">Analytics</h2>
-      <div id="stock-analytics" class="analytics"></div>
-    </section>
+      <section id="analytics-container" class="page-container page-section">
+        <h2 class="section-title">Analytics</h2>
+        <div id="stock-analytics" class="analytics"></div>
+      </section>
 
-    <section id="news-container" class="page-container page-section">
-      <h2 class="section-title">Related News</h2>
-      <div id="stock-news-container"></div>
-    </section>
+      <section id="news-container" class="page-container page-section">
+        <h2 class="section-title">Related News</h2>
+        <div id="stock-news-container"></div>
+      </section>
 
-    <template id="news-card-template">
-      <a class="news-card card-content" target="_blank" rel="noopener noreferrer">
-        <div class="news-card__main">
-          <div class="news-card__image-wrapper">
-            <img class="news-card__image" alt="" />
-          </div>
+      <template id="news-card-template">
+        <a
+          class="news-card card-content"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <div class="news-card__main">
+            <div class="news-card__image-wrapper">
+              <img class="news-card__image" alt="" />
+            </div>
 
-          <div class="news-card__content">
-            <h3 class="news-card__headline"></h3>
+            <div class="news-card__content">
+              <h3 class="news-card__headline"></h3>
 
-            <div class="news-card__meta">
-              <span class="news-card__source"></span>
-              <span class="news-card__timestamp"></span>
+              <div class="news-card__meta">
+                <span class="news-card__source"></span>
+                <span class="news-card__timestamp"></span>
+              </div>
             </div>
           </div>
-        </div>
 
-        <p class="news-card__summary"></p>
-      </a>
-    </template>
-  </main>
+          <p class="news-card__summary"></p>
+        </a>
+      </template>
+    </main>
 
-  <footer id="footer"></footer>
-</body>
-
+    <footer id="footer"></footer>
+  </body>
 </html>

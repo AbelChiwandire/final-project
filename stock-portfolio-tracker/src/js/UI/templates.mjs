@@ -3,7 +3,7 @@ export function addStockTemplate(isEdit = false) {
     <div class="modal-panel">
 
       <div class="modal-header">
-        <h2>${isEdit ? 'Edit Stock' : 'Add Stock'}</h2>
+        <h2>${isEdit ? "Edit Stock" : "Add Stock"}</h2>
         <button class="modal-close" aria-label="Close modal">&times;</button>
       </div>
 
@@ -30,7 +30,7 @@ export function addStockTemplate(isEdit = false) {
 
         <div class="modal-actions">
           <button type="button" class="modal-cancel" aria-label="Cancel">Cancel</button>
-          <button type="submit" class="button-primary animated-border cta">${isEdit ? 'Edit Stock' : 'Add Stock'}</button>
+          <button type="submit" class="button-primary animated-border cta">${isEdit ? "Edit Stock" : "Add Stock"}</button>
         </div>
       </form>
 

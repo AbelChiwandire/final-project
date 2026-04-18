@@ -124,12 +124,17 @@ export const SkeletonTemplates = {
 
   // Stock metrics skeleton - matches analytics grid layout
   stockMetrics: () => `
-    ${Array(3).fill('').map(() => `
+    ${Array(3)
+      .fill("")
+      .map(
+        () => `
       <div class="card-content metric-card shimmer-item">
         <div class="metric-label skeleton-text skeleton-text--small"></div>
         <div class="metric-value skeleton-text skeleton-text--large"></div>
       </div>
-    `).join('')}
+    `,
+      )
+      .join("")}
   `,
 
   // News card skeleton - matches renderNews structure exactly
@@ -153,7 +158,7 @@ export const SkeletonTemplates = {
         <span class="skeleton-text skeleton-text--small"></span>
       </p>
     </a>
-  `
+  `,
 };
 
 // Skeleton state manager
@@ -164,9 +169,10 @@ export class SkeletonManager {
 
   // Show skeleton for a container
   showSkeleton(container, skeletonType) {
-    const containerEl = typeof container === "string"
-      ? document.querySelector(container)
-      : container;
+    const containerEl =
+      typeof container === "string"
+        ? document.querySelector(container)
+        : container;
 
     if (!containerEl) return;
 
@@ -193,9 +199,10 @@ export class SkeletonManager {
 
   // Hide skeleton and restore content
   hideSkeleton(container, content = null) {
-    const containerEl = typeof container === "string"
-      ? document.querySelector(container)
-      : container;
+    const containerEl =
+      typeof container === "string"
+        ? document.querySelector(container)
+        : container;
 
     if (!containerEl) return;
 
@@ -211,7 +218,7 @@ export class SkeletonManager {
     }
 
     // Clear active skeleton tracking
-    this.activeSkeletons.forEach(key => {
+    this.activeSkeletons.forEach((key) => {
       if (key.startsWith(containerEl.id || container)) {
         this.activeSkeletons.delete(key);
       }
@@ -220,22 +227,23 @@ export class SkeletonManager {
 
   // Check if skeleton is active for container
   isSkeletonActive(container) {
-    const containerEl = typeof container === "string"
-      ? document.querySelector(container)
-      : container;
+    const containerEl =
+      typeof container === "string"
+        ? document.querySelector(container)
+        : container;
 
     if (!containerEl) return false;
 
-    return Array.from(this.activeSkeletons).some(key =>
-      key.startsWith(containerEl.id || container)
+    return Array.from(this.activeSkeletons).some((key) =>
+      key.startsWith(containerEl.id || container),
     );
   }
 
   // Clear all skeletons
   clearAll() {
     this.activeSkeletons.clear();
-    document.querySelectorAll('.shimmer-group').forEach(el => {
-      el.classList.remove('shimmer-group');
+    document.querySelectorAll(".shimmer-group").forEach((el) => {
+      el.classList.remove("shimmer-group");
       if (el.dataset.originalContent) {
         el.innerHTML = el.dataset.originalContent;
         delete el.dataset.originalContent;
@@ -248,6 +256,9 @@ export class SkeletonManager {
 export const skeletonManager = new SkeletonManager();
 
 // Helper functions for common skeleton operations
-export const showSkeleton = (container, type) => skeletonManager.showSkeleton(container, type);
-export const hideSkeleton = (container, content) => skeletonManager.hideSkeleton(container, content);
-export const isSkeletonActive = (container) => skeletonManager.isSkeletonActive(container);
+export const showSkeleton = (container, type) =>
+  skeletonManager.showSkeleton(container, type);
+export const hideSkeleton = (container, content) =>
+  skeletonManager.hideSkeleton(container, content);
+export const isSkeletonActive = (container) =>
+  skeletonManager.isSkeletonActive(container);

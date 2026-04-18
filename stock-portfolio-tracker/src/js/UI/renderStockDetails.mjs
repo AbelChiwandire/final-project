@@ -2,9 +2,17 @@ import { renderStockProfile } from "./renderStockProfile.mjs";
 import { renderStockMetrics } from "./renderStockMetrics.mjs";
 import { renderAnalytics } from "./renderAnalytics.mjs";
 import { renderStockNews } from "./renderNews.mjs";
-import { showSkeleton, hideSkeleton, isSkeletonActive } from "../modules/skeleton.mjs";
+import {
+  showSkeleton,
+  hideSkeleton,
+  isSkeletonActive,
+} from "../modules/skeleton.mjs";
 
-export function renderStockDetails(stockDetails, containers, isLoading = false) {
+export function renderStockDetails(
+  stockDetails,
+  containers,
+  isLoading = false,
+) {
   const {
     profileContainerEl,
     metricsContainerEl,
@@ -21,27 +29,40 @@ export function renderStockDetails(stockDetails, containers, isLoading = false) 
 
     // For metrics container, render 8 skeleton cards directly
     if (metricsContainerEl) {
-      metricsContainerEl.innerHTML = Array(8).fill('').map(() => `
+      metricsContainerEl.innerHTML = Array(8)
+        .fill("")
+        .map(
+          () => `
         <div class="card-content metric-card shimmer-item">
           <div class="metric-label skeleton-text skeleton-text--small"></div>
           <div class="metric-value skeleton-text skeleton-text--large"></div>
         </div>
-      `).join('');
+      `,
+        )
+        .join("");
     }
 
     // For analytics container, render 3 skeleton cards directly
     if (analyticsContainerEl) {
-      analyticsContainerEl.innerHTML = Array(3).fill('').map(() => `
+      analyticsContainerEl.innerHTML = Array(3)
+        .fill("")
+        .map(
+          () => `
         <div class="card-content metric-card shimmer-item">
           <div class="metric-label skeleton-text skeleton-text--small"></div>
           <div class="metric-value skeleton-text skeleton-text--large"></div>
         </div>
-      `).join('');
+      `,
+        )
+        .join("");
     }
 
     // For news container, render 8 news skeleton cards
     if (newsContainerEl) {
-      newsContainerEl.innerHTML = Array(8).fill('').map(() => `
+      newsContainerEl.innerHTML = Array(8)
+        .fill("")
+        .map(
+          () => `
         <a class="news-card card-content shimmer-item" href="#">
           <div class="news-card__main">
             <div class="news-card__image-wrapper">
@@ -61,7 +82,9 @@ export function renderStockDetails(stockDetails, containers, isLoading = false) 
             <span class="skeleton-text skeleton-text--small"></span>
           </p>
         </a>
-      `).join('');
+      `,
+        )
+        .join("");
     }
 
     // Don't render actual content while loading

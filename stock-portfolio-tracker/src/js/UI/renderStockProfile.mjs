@@ -19,9 +19,10 @@ export function renderStockProfile(data, containerEl) {
   // Check for API failures and show error state if needed
   if (hasApiFailures(data)) {
     const failedSources = getFailedDataSources(data);
-    const message = failedSources.length > 1
-      ? `Failed to load: ${failedSources.join(', ')}`
-      : `Failed to load ${failedSources[0]}`;
+    const message =
+      failedSources.length > 1
+        ? `Failed to load: ${failedSources.join(", ")}`
+        : `Failed to load ${failedSources[0]}`;
 
     renderErrorState(containerEl, message);
     return;
@@ -36,7 +37,7 @@ export function renderStockProfile(data, containerEl) {
     <div class="profile-header page-container page-section">
       
       <div class="profile-left">
-        <img class="profile-logo" src="${profile.logo || ""}" alt="${displayValue(profile.companyName) || displayValue(data?.symbol) || 'Company logo'}" />
+        <img class="profile-logo" src="${profile.logo || ""}" alt="${displayValue(profile.companyName) || displayValue(data?.symbol) || "Company logo"}" />
 
         <div class="profile-text">
           <div class="profile-title-row">
@@ -59,10 +60,11 @@ export function renderStockProfile(data, containerEl) {
 
       <div class="profile-right">
         <div class="profile-price">
-          ${data?.currentPrice != null
-      ? `${formatPrice(data.currentPrice, { allowZero: false })}`
-      : "-"
-    }
+          ${
+            data?.currentPrice != null
+              ? `${formatPrice(data.currentPrice, { allowZero: false })}`
+              : "-"
+          }
         </div>
         <div class="profile-change">-</div>
       </div>
