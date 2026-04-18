@@ -43,6 +43,70 @@ export async function loadTemplate(path) {
   return await response.text();
 }
 
+// ---------------------------
+// Error Notifications
+// ---------------------------
+export function showErrorNotification(message, duration = 5000) {
+  // Remove existing error notifications
+  const existingNotifications = document.querySelectorAll('.error-notification');
+  existingNotifications.forEach(notification => notification.remove());
+
+  // Create notification element
+  const notification = document.createElement('div');
+  notification.className = 'error-notification';
+  notification.textContent = message;
+  notification.style.cssText = `
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #ef4444;
+    color: white;
+    padding: 12px 16px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15);
+    z-index: 9999;
+    font-size: 14px;
+    max-width: 300px;
+    word-wrap: break-word;
+    animation: slideIn 0.3s ease-out;
+  `;
+
+  // Add animation styles if not already present
+  if (!document.querySelector('#error-notification-styles')) {
+    const style = document.createElement('style');
+    style.id = 'error-notification-styles';
+    style.textContent = `
+      @keyframes slideIn {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+      }
+      @keyframes slideOut {
+        from { transform: translateX(0); opacity: 1; }
+        to { transform: translateX(100%); opacity: 0; }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  // Add to page
+  document.body.appendChild(notification);
+
+  // Auto remove after duration
+  setTimeout(() => {
+    notification.style.animation = 'slideOut 0.3s ease-out';
+    setTimeout(() => {
+      if (notification.parentNode) {
+        notification.parentNode.removeChild(notification);
+      }
+    }, 300);
+  }, duration);
+}
+
+export function showPartialFailureNotification(failedCount, totalCount) {
+  const message = `${failedCount} of ${totalCount} stocks failed to load - showing cached data. Please refresh to retry.`;
+  showErrorNotification(message, 6000);
+}
+
 // Dynamic header and footer loading
 export async function loadHeaderFooter() {
   const header = qs("#header");

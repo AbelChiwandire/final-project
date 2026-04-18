@@ -68,27 +68,61 @@ export default class StockData {
   // ---------------------------
 
   async validateSymbol(symbol) {
+    console.log("StockData.validateSymbol called with:", symbol);
+    console.log("API_KEY available:", !!API_KEY);
+
     try {
       const response = await fetch(
         `https://finnhub.io/api/v1/quote?symbol=${symbol}&token=${API_KEY}`,
       );
 
+      console.log("Response status:", response.status, response.ok);
+
       if (!response.ok) {
-        return { valid: false, error: "Symbol not found" };
+        console.log("Response not ok, checking status code");
+        // Handle different HTTP status codes with specific error messages
+        if (response.status === 401) {
+          return { valid: false, error: "API configuration error - please check API key" };
+        } else if (response.status === 403) {
+          return { valid: false, error: "API access forbidden - please check API key" };
+        } else if (response.status === 429) {
+          return { valid: false, error: "API rate limit exceeded - please try again later" };
+        } else if (response.status >= 500) {
+          return { valid: false, error: "Service temporarily unavailable - please try again later" };
+        } else {
+          return { valid: false, error: "Unable to validate symbol - please refresh and try again" };
+        }
       }
 
       const data = await this.convertToJson(response);
+      console.log("API response data:", data);
 
       // Check if the response contains valid data
       // Finnhub returns null values for invalid symbols
       if (data.c === null && data.h === null && data.l === null) {
+        console.log("All values are null, symbol is invalid");
         return { valid: false, error: "Invalid stock symbol" };
       }
 
+      // Additional check: if current price is 0 or null, it's likely invalid
+      if (data.c === 0 || data.c === null) {
+        console.log("Current price is 0 or null, symbol likely invalid");
+        return { valid: false, error: "Invalid stock symbol" };
+      }
+
+      console.log("Symbol validation passed");
       return { valid: true };
     } catch (error) {
       console.error("Error validating symbol:", error);
-      return { valid: false, error: "Failed to validate symbol" };
+
+      // Distinguish between network errors and other errors
+      if (error.name === 'TypeError' && error.message.includes('fetch')) {
+        return { valid: false, error: "Network error - please check connection and try again" };
+      } else if (error.name === 'AbortError') {
+        return { valid: false, error: "Request timed out - please refresh and try again" };
+      } else {
+        return { valid: false, error: "Unable to validate symbol - please refresh and try again" };
+      }
     }
   }
 

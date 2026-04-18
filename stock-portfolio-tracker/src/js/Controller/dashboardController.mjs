@@ -29,6 +29,12 @@ function handleClick(event, portfolioManager) {
     return;
   }
 
+  // If card is flipped and user clicks anywhere on it, navigate to details
+  if (card.classList.contains("flipped")) {
+    navigateToDetails(symbol);
+    return;
+  }
+
   navigateToDetails(symbol);
 }
 

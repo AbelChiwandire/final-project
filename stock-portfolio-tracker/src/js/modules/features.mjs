@@ -29,11 +29,15 @@ export function openAddStockModal(position = null) {
 
       try {
         // Validate symbol first
-        const validation = await portfolioManager.validateSymbol(
-          symbol.value.toUpperCase(),
-        );
+        const symbolToValidate = symbol.value.trim().toUpperCase();
+        console.log("Validating symbol:", symbolToValidate);
+
+        const validation = await portfolioManager.validateSymbol(symbolToValidate);
+        console.log("Validation result:", validation);
 
         if (!validation.valid) {
+          console.log("Symbol validation failed, showing error:", validation.error);
+
           // Show error message to user
           const errorDiv = document.createElement("div");
           errorDiv.className = "validation-error";
@@ -56,12 +60,14 @@ export function openAddStockModal(position = null) {
             symbol.style.borderColor = "";
           }, 3000);
 
-          return;
+          return; // Stop execution - do not add stock
         }
+
+        console.log("Symbol validation passed, adding stock to portfolio");
 
         // If validation passes, add the position
         portfolioManager.setPosition(
-          symbol.value.toUpperCase(),
+          symbolToValidate,
           Number(shares.value),
           Number(avgCost.value),
           companyName.value,
