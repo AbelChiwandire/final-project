@@ -1335,12 +1335,10 @@ body.modal-open {
   border-radius: inherit;
   padding: 2px;
 
-  background: linear-gradient(
-    90deg,
-    transparent,
-    hsl(var(--accent-border)),
-    transparent
-  );
+  background: linear-gradient(90deg,
+      transparent,
+      hsl(var(--accent-border)),
+      transparent);
 
   background-size: 200% 100%;
   animation: border-slide 2.2s linear infinite;
@@ -1400,12 +1398,10 @@ body.modal-open {
   width: 50%;
   height: 100%;
 
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    var(--shimmer-highlight) 50%,
-    transparent 100%
-  );
+  background: linear-gradient(90deg,
+      transparent 0%,
+      var(--shimmer-highlight) 50%,
+      transparent 100%);
 
   transform: skewX(-20deg);
   animation: shimmer-move 3.5s ease-in-out infinite;
@@ -1426,12 +1422,10 @@ body.modal-open {
    SKELETON ELEMENTS
 ========================= */
 .skeleton-text {
-  background: linear-gradient(
-    90deg,
-    hsl(var(--muted)) 25%,
-    hsl(var(--border)) 50%,
-    hsl(var(--muted)) 75%
-  );
+  background: linear-gradient(90deg,
+      hsl(var(--muted)) 25%,
+      hsl(var(--border)) 50%,
+      hsl(var(--muted)) 75%);
   background-size: 200% 100%;
   animation: skeleton-shimmer 1.5s ease-in-out infinite;
   border-radius: 4px;
@@ -1457,12 +1451,10 @@ body.modal-open {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: linear-gradient(
-    90deg,
-    hsl(var(--muted)) 25%,
-    hsl(var(--border)) 50%,
-    hsl(var(--muted)) 75%
-  );
+  background: linear-gradient(90deg,
+      hsl(var(--muted)) 25%,
+      hsl(var(--border)) 50%,
+      hsl(var(--muted)) 75%);
   background-size: 200% 100%;
   animation: skeleton-shimmer 1.5s ease-in-out infinite;
 }
@@ -1470,12 +1462,10 @@ body.modal-open {
 .skeleton-image {
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    90deg,
-    hsl(var(--muted)) 25%,
-    hsl(var(--border)) 50%,
-    hsl(var(--muted)) 75%
-  );
+  background: linear-gradient(90deg,
+      hsl(var(--muted)) 25%,
+      hsl(var(--border)) 50%,
+      hsl(var(--muted)) 75%);
   background-size: 200% 100%;
   animation: skeleton-shimmer 1.5s ease-in-out infinite;
 }
@@ -1505,4 +1495,123 @@ body.modal-open {
   to {
     transform: rotate(360deg);
   }
+}
+
+/* =========================
+   MODAL UPDATES
+========================= */
+
+/* Email field styling */
+.email-field {
+  transition: all 0.3s ease;
+}
+
+.email-field input {
+  border-color: hsl(var(--border));
+}
+
+.email-field input:focus {
+  border-color: hsl(var(--primary));
+}
+
+/* User info section */
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-icon-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 2px solid hsl(var(--primary));
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.user-header {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.user-icon {
+  color: hsl(var(--primary));
+  width: 20px;
+  height: 20px;
+}
+
+.user-email {
+  font-size: 0.75rem;
+  color: hsl(var(--text));
+  opacity: 0.7;
+}
+
+/* Theme button group */
+.theme-button-group {
+  display: flex;
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid hsl(var(--border));
+  margin-top: 8px;
+}
+
+.theme-btn {
+  flex: 1;
+  padding: 8px 16px;
+  border: none;
+  background: hsl(var(--card));
+  color: hsl(var(--text));
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.875rem;
+  border-radius: 0;
+}
+
+.theme-btn:first-child {
+  border-radius: var(--radius) 0 0 var(--radius);
+}
+
+.theme-btn:last-child {
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+
+.theme-btn.active {
+  background: hsl(var(--primary));
+  color: white;
+}
+
+.theme-btn:hover:not(.active) {
+  background: hsl(var(--muted));
+}
+
+/* Updated sign-out button */
+.modal-actions.flex-end {
+  justify-content: flex-end;
+}
+
+.settings-signout-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: none;
+  color: hsl(var(--text));
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: var(--radius);
+  transition: all 0.2s ease;
+}
+
+.settings-signout-btn:hover {
+  background: hsl(0 100% 50%);
+  color: white;
+  opacity: 0.9;
+}
+
+.sign-out-icon {
+  color: currentColor;
 }
