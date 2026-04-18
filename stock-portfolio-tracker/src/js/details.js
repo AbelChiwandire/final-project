@@ -91,6 +91,9 @@ if (btn) {
   } catch (err) {
     portfolioManager.isRefreshing = false;
     console.error("Error loading stock details:", err);
-    showErrorNotification("Failed to load stock details - please check connection and refresh", 6000);
+    showErrorNotification(
+      "Failed to load stock details - please check connection and refresh",
+      6000,
+    );
   }
 })();

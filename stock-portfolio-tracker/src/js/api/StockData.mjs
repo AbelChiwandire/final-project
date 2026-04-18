@@ -82,15 +82,30 @@ export default class StockData {
         console.log("Response not ok, checking status code");
         // Handle different HTTP status codes with specific error messages
         if (response.status === 401) {
-          return { valid: false, error: "API configuration error - please check API key" };
+          return {
+            valid: false,
+            error: "API configuration error - please check API key",
+          };
         } else if (response.status === 403) {
-          return { valid: false, error: "API access forbidden - please check API key" };
+          return {
+            valid: false,
+            error: "API access forbidden - please check API key",
+          };
         } else if (response.status === 429) {
-          return { valid: false, error: "API rate limit exceeded - please try again later" };
+          return {
+            valid: false,
+            error: "API rate limit exceeded - please try again later",
+          };
         } else if (response.status >= 500) {
-          return { valid: false, error: "Service temporarily unavailable - please try again later" };
+          return {
+            valid: false,
+            error: "Service temporarily unavailable - please try again later",
+          };
         } else {
-          return { valid: false, error: "Unable to validate symbol - please refresh and try again" };
+          return {
+            valid: false,
+            error: "Unable to validate symbol - please refresh and try again",
+          };
         }
       }
 
@@ -116,12 +131,21 @@ export default class StockData {
       console.error("Error validating symbol:", error);
 
       // Distinguish between network errors and other errors
-      if (error.name === 'TypeError' && error.message.includes('fetch')) {
-        return { valid: false, error: "Network error - please check connection and try again" };
-      } else if (error.name === 'AbortError') {
-        return { valid: false, error: "Request timed out - please refresh and try again" };
+      if (error.name === "TypeError" && error.message.includes("fetch")) {
+        return {
+          valid: false,
+          error: "Network error - please check connection and try again",
+        };
+      } else if (error.name === "AbortError") {
+        return {
+          valid: false,
+          error: "Request timed out - please refresh and try again",
+        };
       } else {
-        return { valid: false, error: "Unable to validate symbol - please refresh and try again" };
+        return {
+          valid: false,
+          error: "Unable to validate symbol - please refresh and try again",
+        };
       }
     }
   }

@@ -32,11 +32,15 @@ export function openAddStockModal(position = null) {
         const symbolToValidate = symbol.value.trim().toUpperCase();
         console.log("Validating symbol:", symbolToValidate);
 
-        const validation = await portfolioManager.validateSymbol(symbolToValidate);
+        const validation =
+          await portfolioManager.validateSymbol(symbolToValidate);
         console.log("Validation result:", validation);
 
         if (!validation.valid) {
-          console.log("Symbol validation failed, showing error:", validation.error);
+          console.log(
+            "Symbol validation failed, showing error:",
+            validation.error,
+          );
 
           // Show error message to user
           const errorDiv = document.createElement("div");

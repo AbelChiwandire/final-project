@@ -1,5 +1,8 @@
 import { getUserPortfolio, setUserPortfolio } from "./storage.mjs";
-import { showErrorNotification, showPartialFailureNotification } from "./utils.mjs";
+import {
+  showErrorNotification,
+  showPartialFailureNotification,
+} from "./utils.mjs";
 import StockData from "./../api/StockData.mjs";
 
 const stockData = new StockData();
@@ -97,13 +100,16 @@ export default class PortfolioManager {
     const results = await Promise.all(fetchPromises);
 
     // Check for fetch failures and show notification
-    const failedStocks = results.filter(stock => stock.fetchFailed);
+    const failedStocks = results.filter((stock) => stock.fetchFailed);
     const totalStocks = results.length;
 
     if (failedStocks.length > 0) {
       if (failedStocks.length === totalStocks) {
         // All stocks failed
-        showErrorNotification("Unable to load portfolio data - please check connection and refresh", 6000);
+        showErrorNotification(
+          "Unable to load portfolio data - please check connection and refresh",
+          6000,
+        );
       } else {
         // Partial failures
         showPartialFailureNotification(failedStocks.length, totalStocks);
@@ -274,7 +280,10 @@ export default class PortfolioManager {
         this.cache[symbol] = finnhubData;
       } catch (err) {
         console.error(`Finnhub fallback failed for ${symbol}:`, err);
-        showErrorNotification(`Failed to fetch ${symbol} data - please refresh and try again`, 5000);
+        showErrorNotification(
+          `Failed to fetch ${symbol} data - please refresh and try again`,
+          5000,
+        );
 
         finnhubData = {
           ...position,
@@ -322,10 +331,10 @@ export default class PortfolioManager {
       finnhubData.currentPrice != null
         ? this.computePositionValues(position, finnhubData.currentPrice)
         : {
-          marketValue: null,
-          costBasis: null,
-          totalPnL: null,
-        };
+            marketValue: null,
+            costBasis: null,
+            totalPnL: null,
+          };
 
     const result = {
       symbol,

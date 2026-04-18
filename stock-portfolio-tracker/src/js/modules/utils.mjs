@@ -48,12 +48,14 @@ export async function loadTemplate(path) {
 // ---------------------------
 export function showErrorNotification(message, duration = 5000) {
   // Remove existing error notifications
-  const existingNotifications = document.querySelectorAll('.error-notification');
-  existingNotifications.forEach(notification => notification.remove());
+  const existingNotifications = document.querySelectorAll(
+    ".error-notification",
+  );
+  existingNotifications.forEach((notification) => notification.remove());
 
   // Create notification element
-  const notification = document.createElement('div');
-  notification.className = 'error-notification';
+  const notification = document.createElement("div");
+  notification.className = "error-notification";
   notification.textContent = message;
   notification.style.cssText = `
     position: fixed;
@@ -72,9 +74,9 @@ export function showErrorNotification(message, duration = 5000) {
   `;
 
   // Add animation styles if not already present
-  if (!document.querySelector('#error-notification-styles')) {
-    const style = document.createElement('style');
-    style.id = 'error-notification-styles';
+  if (!document.querySelector("#error-notification-styles")) {
+    const style = document.createElement("style");
+    style.id = "error-notification-styles";
     style.textContent = `
       @keyframes slideIn {
         from { transform: translateX(100%); opacity: 0; }
@@ -93,7 +95,7 @@ export function showErrorNotification(message, duration = 5000) {
 
   // Auto remove after duration
   setTimeout(() => {
-    notification.style.animation = 'slideOut 0.3s ease-out';
+    notification.style.animation = "slideOut 0.3s ease-out";
     setTimeout(() => {
       if (notification.parentNode) {
         notification.parentNode.removeChild(notification);
