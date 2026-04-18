@@ -130,7 +130,7 @@ export function renderPortfolio(portfolioData, container) {
 
           <!-- ACTIONS (intentionally outside flip system) -->
           <div class="card-actions">
-            <button class="action-btn" data-action="flip">
+            <button class="action-btn" data-action="flip" aria-label="View stock details">
               <svg fill="currentColor" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
                 width="800px" height="800px" viewBox="0 0 528.919 528.918"
                 xml:space="preserve">

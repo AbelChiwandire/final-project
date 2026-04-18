@@ -4,7 +4,7 @@ export function addStockTemplate(isEdit = false) {
 
       <div class="modal-header">
         <h2>${isEdit ? 'Edit Stock' : 'Add Stock'}</h2>
-        <button class="modal-close">&times;</button>
+        <button class="modal-close" aria-label="Close modal">&times;</button>
       </div>
 
       <form id="add-stock-form" class="modal-body modal-form">
@@ -29,7 +29,7 @@ export function addStockTemplate(isEdit = false) {
         </label>
 
         <div class="modal-actions">
-          <button type="button" class="modal-cancel">Cancel</button>
+          <button type="button" class="modal-cancel" aria-label="Cancel">Cancel</button>
           <button type="submit" class="button-primary animated-border cta">${isEdit ? 'Edit Stock' : 'Add Stock'}</button>
         </div>
       </form>
@@ -42,7 +42,7 @@ export const authTemplate = () => `
 
     <div class="modal-header">
       <h2>Account</h2>
-      <button type="button" class="modal-close">&times;</button>
+      <button type="button" class="modal-close" aria-label="Close account modal">&times;</button>
     </div>
 
     <form id="auth-form" class="modal-body modal-form">
@@ -83,11 +83,11 @@ export const authTemplate = () => `
       
       <input type="hidden" name="action" value="signin"/>
 
-      <button type="button" id="switch-action" class="modal-link">
+      <button type="button" id="switch-action" class="modal-link" aria-label="Switch to sign up">
       Do not have an account? <span class="modal-link-text">Sign Up</span>
       </button>
 
-      <button type="submit" class="button-primary animated-border cta">Log In</button>
+      <button type="submit" class="button-primary animated-border cta" aria-label="Log in">Log In</button>
       
     </form>
 
@@ -120,7 +120,7 @@ export function settingsTemplate({ username, theme }) {
         </div>
 
         <div class="modal-actions">
-          <button class="settings-signout-btn modal-danger">Sign Out</button>
+          <button class="settings-signout-btn modal-danger" aria-label="Sign Out">Sign Out</button>
         </div>
 
       </div>
@@ -158,7 +158,7 @@ export function getFallbackTemplate(state) {
         ${text}
       </p>
 
-      <button id="${buttonId}" class="fallback-btn button-primary">
+      <button id="${buttonId}" class="fallback-btn button-primary" aria-label="${buttonText}">
         ${buttonText}
       </button>
     </div>
@@ -169,7 +169,7 @@ export function stockDetailsHeaderTemplate(symbol) {
   return `
     <div class="page-container flex-between">
       <div class="flex-between">
-        <button id="back-to-portfolio" class="details-back-btn">
+        <button id="back-to-portfolio" class="details-back-btn" aria-label="Back to portfolio">
           <svg width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path fill-rule="evenodd" clip-rule="evenodd" d="M11.7071 4.29289C12.0976 4.68342 12.0976 5.31658 11.7071 5.70711L6.41421 11H20C20.5523 11 21 11.4477 21 12C21 12.5523 20.5523 13 20 13H6.41421L11.7071 18.2929C12.0976 18.6834 12.0976 19.3166 11.7071 19.7071C11.3166 20.0976 10.6834 20.0976 10.2929 19.7071L3.29289 12.7071C3.10536 12.5196 3 12.2652 3 12C3 11.7348 3.10536 11.4804 3.29289 11.2929L10.2929 4.29289C10.6834 3.90237 11.3166 3.90237 11.7071 4.29289Z" fill="currentColor"/>
           </svg>
