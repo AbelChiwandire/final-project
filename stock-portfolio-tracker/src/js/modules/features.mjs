@@ -133,7 +133,7 @@ export function openAuthModal() {
   openFormModal(
     authTemplate,
     async (elements, closeModal) => {
-      const { username, password, action } = elements;
+      const { username, password, email, action } = elements;
       const isSignUp = action.value === "signup";
 
       // Clear previous validation messages
@@ -145,9 +145,23 @@ export function openAuthModal() {
         password,
         document.getElementById("password-validation"),
       );
+      clearValidationMessage(
+        email,
+        document.getElementById("email-validation"),
+      );
 
       // Validate based on mode
       if (isSignUp) {
+        // Validate email for sign up
+        if (!email.checkValidity()) {
+          showValidationMessage(
+            email,
+            document.getElementById("email-validation"),
+            "Please enter a valid email address",
+          );
+          return;
+        }
+
         // Validate password strength for sign up
         const passwordValidation = validatePassword(password.value);
         if (!passwordValidation.isValid) {
@@ -161,7 +175,11 @@ export function openAuthModal() {
       }
 
       // Handle authentication
-      const user = new User(username.value, password.value);
+      const user = new User(
+        username.value,
+        password.value,
+        isSignUp ? email.value : null,
+      );
       let result;
 
       if (action.value === "signin") {
@@ -218,22 +236,19 @@ export function openAuthModal() {
     },
     {
       onInit: (elements) => {
-        const form = document.querySelector("#modal-root #auth-form");
-        if (!form) return;
-
-        const usernameInput = form.querySelector('[name="username"]');
-        const passwordInput = form.querySelector('[name="password"]');
-        const usernameValidation = document.getElementById(
-          "username-validation",
+        const form = elements[0].form;
+        const usernameInput = elements.username;
+        const passwordInput = elements.password;
+        const emailInput = elements.email;
+        const actionInput = elements.action;
+        const usernameValidation = form.querySelector("#username-validation");
+        const passwordValidation = form.querySelector("#password-validation");
+        const emailValidation = form.querySelector("#email-validation");
+        const passwordRequirements = form.querySelector(
+          "#password-requirements",
         );
-        const passwordValidation = document.getElementById(
-          "password-validation",
-        );
-        const passwordRequirements = document.getElementById(
-          "password-requirements",
-        );
-        const passwordToggle = document.getElementById("password-toggle");
-        const actionInput = form.querySelector('[name="action"]');
+        const passwordToggle = form.querySelector("#password-toggle");
+        const emailField = form.querySelector(".email-field");
 
         // Password visibility toggle
         passwordToggle.addEventListener("click", () => {
@@ -286,6 +301,29 @@ export function openAuthModal() {
           }
         });
 
+        // Email validation for sign up
+        emailInput.addEventListener("input", () => {
+          if (actionInput.value === "signup") {
+            if (emailInput.value.length > 0) {
+              const isValid = emailInput.checkValidity();
+              showValidationMessage(
+                emailInput,
+                emailValidation,
+                isValid ? "Valid email" : "Please enter a valid email address",
+                !isValid,
+              );
+            } else {
+              clearValidationMessage(emailInput, emailValidation);
+            }
+          } else {
+            clearValidationMessage(emailInput, emailValidation);
+          }
+        });
+
+        // Initialize email input state for login mode
+        emailInput.removeAttribute("required");
+        emailInput.placeholder = "Email";
+
         // Handle mode switching
         const switchBtn = form.querySelector("#switch-action");
         const submitBtn = form.querySelector('button[type="submit"]');
@@ -296,10 +334,14 @@ export function openAuthModal() {
             submitBtn.textContent = "Create Account";
             switchBtn.innerHTML = `Already have an account? <span class="modal-link-text">Sign In</span>`;
             passwordRequirements.style.display = "block";
+            emailField.style.display = "block";
+            emailInput.setAttribute("required", "");
+            emailInput.placeholder = "Email*";
 
             // Clear validation and check current inputs
             clearValidationMessage(usernameInput, usernameValidation);
             clearValidationMessage(passwordInput, passwordValidation);
+            clearValidationMessage(emailInput, emailValidation);
 
             // Trigger validation for current values
             if (usernameInput.value.trim().length > 0) {
@@ -308,15 +350,22 @@ export function openAuthModal() {
             if (passwordInput.value.length > 0) {
               passwordInput.dispatchEvent(new Event("input"));
             }
+            if (emailInput.value.length > 0) {
+              emailInput.dispatchEvent(new Event("input"));
+            }
           } else {
             actionInput.value = "signin";
             submitBtn.textContent = "Log In";
             switchBtn.innerHTML = `Do not have an account? <span class="modal-link-text">Sign Up</span>`;
             passwordRequirements.style.display = "none";
+            emailField.style.display = "none";
+            emailInput.removeAttribute("required");
+            emailInput.placeholder = "Email";
 
             // Clear validation messages for sign in mode
             clearValidationMessage(usernameInput, usernameValidation);
             clearValidationMessage(passwordInput, passwordValidation);
+            clearValidationMessage(emailInput, emailValidation);
           }
         });
       },
@@ -338,6 +387,7 @@ export function openSettingsModal() {
     root.innerHTML = settingsTemplate({
       username: formattedUsername,
       theme,
+      email: user.email || null,
     });
 
     const closeBtn = root.querySelector(".modal-close");
@@ -345,15 +395,20 @@ export function openSettingsModal() {
       closeBtn.addEventListener("click", closeModal);
     }
 
-    root
-      .querySelector(".settings-theme-select")
-      .addEventListener("change", (e) => {
-        const newTheme = e.target.value;
+    // Handle theme button clicks
+    const themeButtons = root.querySelectorAll(".theme-btn");
+    themeButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const newTheme = btn.dataset.theme;
+
+        // Update active state
+        themeButtons.forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
 
         setUserTheme(user.id, newTheme);
-
         document.documentElement.classList.toggle("dark", newTheme === "dark");
       });
+    });
 
     root
       .querySelector(".settings-signout-btn")

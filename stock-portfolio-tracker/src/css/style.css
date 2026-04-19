@@ -219,8 +219,6 @@ button:hover {
 }
 
 .button-primary {
-  background: hsl(var(--primary));
-  color: white;
   border: 1px solid transparent;
 }
 
@@ -1077,10 +1075,14 @@ body.modal-open {
   margin-top: 10px;
   padding: 1.2rem;
   font-size: 1.2rem;
+  background: hsl(var(--primary));
+  color: white;
 }
 
-.fallback-btn:hover {
-  background: hsl(var(--primary-metric));
+.fallback-btn:hover,
+.dark .fallback-btn:hover,
+.dark .theme-btn.active:hover {
+  background: hsl(var(--primary));
 }
 
 /* =========================
@@ -1095,12 +1097,9 @@ body.modal-open {
   color: hsl(var(--text));
 }
 
-.details-refresh-btn:hover {
-  background: rgba(0, 0, 0, 0.05);
-}
-
+.details-refresh-btn:hover,
 .dark .details-refresh-btn:hover {
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(0, 0, 0, 0.05);
 }
 
 .details-back-btn {
@@ -1111,12 +1110,9 @@ body.modal-open {
   color: hsl(var(--text));
 }
 
-.details-back-btn:hover {
-  background: rgba(0, 0, 0, 0.05);
-}
-
+.details-back-btn:hover,
 .dark .details-back-btn:hover {
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(0, 0, 0, 0.05);
 }
 
 .details-symbol {
@@ -1505,4 +1501,118 @@ body.modal-open {
   to {
     transform: rotate(360deg);
   }
+}
+
+/* =========================
+   MODAL UPDATES
+========================= */
+
+/* Email field styling */
+.email-field {
+  transition: all 0.3s ease;
+}
+
+.email-field input {
+  border-color: hsl(var(--border));
+}
+
+.email-field input:focus {
+  border-color: hsl(var(--primary));
+}
+
+/* User info section */
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-icon-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 2px solid hsl(var(--primary));
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.user-header {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.user-icon {
+  color: hsl(var(--primary));
+  width: 20px;
+  height: 20px;
+}
+
+.user-email {
+  font-size: 0.75rem;
+  color: hsl(var(--text));
+  opacity: 0.7;
+}
+
+/* Theme button group */
+.theme-button-group {
+  display: flex;
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid hsl(var(--border));
+  margin-top: 8px;
+}
+
+.theme-btn {
+  flex: 1;
+  padding: 8px 16px;
+  border: none;
+  background: hsl(var(--card));
+  color: hsl(var(--text));
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.875rem;
+  border-radius: 0;
+}
+
+.theme-btn:first-child {
+  border-radius: var(--radius) 0 0 var(--radius);
+}
+
+.theme-btn:last-child {
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+
+.theme-btn.active {
+  background: hsl(var(--primary));
+  color: white;
+}
+
+.theme-btn:hover:not(.active) {
+  background: hsl(var(--muted));
+}
+
+/* Updated sign-out button */
+.modal-actions.flex-end {
+  justify-content: flex-end;
+}
+
+.settings-signout-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: none;
+  color: hsl(var(--text));
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: var(--radius);
+  transition: all 0.2s ease;
+}
+
+.settings-signout-btn:hover {
+  background: hsl(0 100% 50% / 0.05);
+  color: hsl(var(--danger));
 }

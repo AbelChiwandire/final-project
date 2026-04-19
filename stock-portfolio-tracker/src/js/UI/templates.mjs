@@ -51,6 +51,11 @@ export const authTemplate = () => `
         <span class="validation-message" id="username-validation"></span>
       </div>
       
+      <div class="form-group email-field" style="display: none;">
+        <input type="email" name="email" placeholder="Email" required />
+        <span class="validation-message" id="email-validation"></span>
+      </div>
+      
       <div class="form-group">
         <div class="password-input-container">
           <input type="password" name="password" placeholder="Password" required />
@@ -94,7 +99,7 @@ export const authTemplate = () => `
   </div>
 `;
 
-export function settingsTemplate({ username, theme }) {
+export function settingsTemplate({ username, theme, email }) {
   return `
     <div class="modal-panel">
 
@@ -105,22 +110,36 @@ export function settingsTemplate({ username, theme }) {
 
       <div class="modal-body">
 
-        <div class="modal-section">
-          <p class="modal-username">${username}</p>
+        <div class="modal-section user-info">
+          <div class="user-icon-container">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" class="user-icon">
+              <path fill="currentColor" d="M9.993 10.573a4.5 4.5 0 1 0 0-9a4.5 4.5 0 0 0 0 9ZM10 0a6 6 0 0 1 3.04 11.174c3.688 1.11 6.458 4.218 6.955 8.078c.047.367-.226.7-.61.745c-.383.045-.733-.215-.78-.582c-.54-4.19-4.169-7.345-8.57-7.345c-4.425 0-8.101 3.161-8.64 7.345c-.047.367-.397.627-.78.582c-.384-.045-.657-.378-.61-.745c.496-3.844 3.281-6.948 6.975-8.068A6 6 0 0 1 10 0Z"/>
+            </svg>
+          </div>
+          <div class="user-header">
+            <p class="modal-username">${username}</p>
+            ${email ? `<span class="user-email">${email}</span>` : ""}
+          </div>
         </div>
 
         <div class="modal-section">
           <label>
             Theme
-            <select class="settings-theme-select modal-select">
-              <option value="light" ${theme === "light" ? "selected" : ""}>Light</option>
-              <option value="dark" ${theme === "dark" ? "selected" : ""}>Dark</option>
-            </select>
+            <div class="theme-button-group">
+              <button type="button" class="theme-btn ${theme === "light" ? "active" : ""}" data-theme="light">Light</button>
+              <button type="button" class="theme-btn ${theme === "dark" ? "active" : ""}" data-theme="dark">Dark</button>
+            </div>
           </label>
         </div>
 
-        <div class="modal-actions">
-          <button class="settings-signout-btn modal-danger" aria-label="Sign Out">Sign Out</button>
+        <div class="modal-actions flex-end">
+          <button class="settings-signout-btn modal-danger" aria-label="Sign Out">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="sign-out-icon">
+              <path fill="currentColor" d="M9 20.75H6a2.64 2.64 0 0 1-2.75-2.53V5.78A2.64 2.64 0 0 1 6 3.25h3a.75.75 0 0 1 0 1.5H6a1.16 1.16 0 0 0-1.25 1v12.47a1.16 1.16 0 0 0 1.25 1h3a.75.75 0 0 1 0 1.5Zm7-4a.74.74 0 0 1-.53-.22a.75.75 0 0 1 0-1.06L18.94 12l-3.47-3.47a.75.75 0 1 1 1.06-1.06l4 4a.75.75 0 0 1 0 1.06l-4 4a.74.74 0 0 1-.53.22Z"/>
+              <path fill="currentColor" d="M20 12.75H9a.75.75 0 0 1 0-1.5h11a.75.75 0 0 1 0 1.5Z"/>
+            </svg>
+            Sign Out
+          </button>
         </div>
 
       </div>

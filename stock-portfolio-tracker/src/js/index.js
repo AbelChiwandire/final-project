@@ -73,7 +73,7 @@ import { renderApp } from "./UI/renderApp.mjs";
       } finally {
         removeRotatingClass(refreshBtn);
       }
-    }, 600000); // 60 sec (safe for API limits)
+    }, 60000); // 60 sec (safe for API limits)
   } catch (err) {
     console.error("Error initializing app:", err);
   }

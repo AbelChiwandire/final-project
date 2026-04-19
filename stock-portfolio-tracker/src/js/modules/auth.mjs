@@ -65,9 +65,10 @@ async function hashPassword(password) {
 
 // ---------- User Class ----------
 export class User {
-  constructor(username, password, id = null) {
+  constructor(username, password, email = null, id = null) {
     this.username = normalizeUsername(username);
     this.password = password;
+    this.email = email;
     this.id = id || generateId();
   }
 
@@ -87,6 +88,7 @@ export class User {
       id: this.id,
       username: this.username,
       password: hashedPassword,
+      email: this.email,
     };
     saveUsers(users);
 
@@ -95,7 +97,10 @@ export class User {
 
     setCurrentUser(this.id);
 
-    return { success: true, user: { id: this.id, username: this.username } };
+    return {
+      success: true,
+      user: { id: this.id, username: this.username, email: this.email },
+    };
   }
 
   // Login existing user
