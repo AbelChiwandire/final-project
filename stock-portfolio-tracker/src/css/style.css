@@ -219,8 +219,6 @@ button:hover {
 }
 
 .button-primary {
-  background: hsl(var(--primary));
-  color: white;
   border: 1px solid transparent;
 }
 
@@ -1077,10 +1075,14 @@ body.modal-open {
   margin-top: 10px;
   padding: 1.2rem;
   font-size: 1.2rem;
+  background: hsl(var(--primary));
+  color: white;
 }
 
-.fallback-btn:hover {
-  background: hsl(var(--primary-metric));
+.fallback-btn:hover,
+.dark .fallback-btn:hover,
+.dark .theme-btn.active:hover {
+  background: hsl(var(--primary));
 }
 
 /* =========================
@@ -1095,12 +1097,9 @@ body.modal-open {
   color: hsl(var(--text));
 }
 
-.details-refresh-btn:hover {
-  background: rgba(0, 0, 0, 0.05);
-}
-
+.details-refresh-btn:hover,
 .dark .details-refresh-btn:hover {
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(0, 0, 0, 0.05);
 }
 
 .details-back-btn {
@@ -1111,12 +1110,9 @@ body.modal-open {
   color: hsl(var(--text));
 }
 
-.details-back-btn:hover {
-  background: rgba(0, 0, 0, 0.05);
-}
-
+.details-back-btn:hover,
 .dark .details-back-btn:hover {
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(0, 0, 0, 0.05);
 }
 
 .details-symbol {
@@ -1607,11 +1603,6 @@ body.modal-open {
 }
 
 .settings-signout-btn:hover {
-  background: hsl(0 100% 50%);
-  color: white;
-  opacity: 0.9;
-}
-
-.sign-out-icon {
-  color: currentColor;
+  background: hsl(0 100% 50% / 0.05);
+  color: hsl(var(--danger));
 }

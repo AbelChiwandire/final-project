@@ -314,6 +314,10 @@ export function openAuthModal() {
           }
         });
 
+        // Initialize email input state for login mode
+        emailInput.removeAttribute("required");
+        emailInput.placeholder = "Email";
+
         // Handle mode switching
         const switchBtn = form.querySelector("#switch-action");
         const submitBtn = form.querySelector('button[type="submit"]');
@@ -325,6 +329,8 @@ export function openAuthModal() {
             switchBtn.innerHTML = `Already have an account? <span class="modal-link-text">Sign In</span>`;
             passwordRequirements.style.display = "block";
             emailField.style.display = "block";
+            emailInput.setAttribute("required", "");
+            emailInput.placeholder = "Email*";
 
             // Clear validation and check current inputs
             clearValidationMessage(usernameInput, usernameValidation);
@@ -347,6 +353,8 @@ export function openAuthModal() {
             switchBtn.innerHTML = `Do not have an account? <span class="modal-link-text">Sign Up</span>`;
             passwordRequirements.style.display = "none";
             emailField.style.display = "none";
+            emailInput.removeAttribute("required");
+            emailInput.placeholder = "Email";
 
             // Clear validation messages for sign in mode
             clearValidationMessage(usernameInput, usernameValidation);

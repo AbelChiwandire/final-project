@@ -86,7 +86,7 @@ if (btn) {
       containers,
       onRefreshStart: setRotatingClass,
       onRefreshEnd: removeRotatingClass,
-      interval: 600000,
+      interval: 60000,
     });
   } catch (err) {
     portfolioManager.isRefreshing = false;
