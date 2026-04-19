@@ -97,7 +97,10 @@ export class User {
 
     setCurrentUser(this.id);
 
-    return { success: true, user: { id: this.id, username: this.username, email: this.email } };
+    return {
+      success: true,
+      user: { id: this.id, username: this.username, email: this.email },
+    };
   }
 
   // Login existing user

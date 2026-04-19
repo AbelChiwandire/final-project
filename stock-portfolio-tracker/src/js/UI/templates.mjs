@@ -118,7 +118,7 @@ export function settingsTemplate({ username, theme, email }) {
           </div>
           <div class="user-header">
             <p class="modal-username">${username}</p>
-            ${email ? `<span class="user-email">${email}</span>` : ''}
+            ${email ? `<span class="user-email">${email}</span>` : ""}
           </div>
         </div>
 

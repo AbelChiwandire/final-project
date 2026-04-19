@@ -1331,10 +1331,12 @@ body.modal-open {
   border-radius: inherit;
   padding: 2px;
 
-  background: linear-gradient(90deg,
-      transparent,
-      hsl(var(--accent-border)),
-      transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    hsl(var(--accent-border)),
+    transparent
+  );
 
   background-size: 200% 100%;
   animation: border-slide 2.2s linear infinite;
@@ -1394,10 +1396,12 @@ body.modal-open {
   width: 50%;
   height: 100%;
 
-  background: linear-gradient(90deg,
-      transparent 0%,
-      var(--shimmer-highlight) 50%,
-      transparent 100%);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--shimmer-highlight) 50%,
+    transparent 100%
+  );
 
   transform: skewX(-20deg);
   animation: shimmer-move 3.5s ease-in-out infinite;
@@ -1418,10 +1422,12 @@ body.modal-open {
    SKELETON ELEMENTS
 ========================= */
 .skeleton-text {
-  background: linear-gradient(90deg,
-      hsl(var(--muted)) 25%,
-      hsl(var(--border)) 50%,
-      hsl(var(--muted)) 75%);
+  background: linear-gradient(
+    90deg,
+    hsl(var(--muted)) 25%,
+    hsl(var(--border)) 50%,
+    hsl(var(--muted)) 75%
+  );
   background-size: 200% 100%;
   animation: skeleton-shimmer 1.5s ease-in-out infinite;
   border-radius: 4px;
@@ -1447,10 +1453,12 @@ body.modal-open {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: linear-gradient(90deg,
-      hsl(var(--muted)) 25%,
-      hsl(var(--border)) 50%,
-      hsl(var(--muted)) 75%);
+  background: linear-gradient(
+    90deg,
+    hsl(var(--muted)) 25%,
+    hsl(var(--border)) 50%,
+    hsl(var(--muted)) 75%
+  );
   background-size: 200% 100%;
   animation: skeleton-shimmer 1.5s ease-in-out infinite;
 }
@@ -1458,10 +1466,12 @@ body.modal-open {
 .skeleton-image {
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg,
-      hsl(var(--muted)) 25%,
-      hsl(var(--border)) 50%,
-      hsl(var(--muted)) 75%);
+  background: linear-gradient(
+    90deg,
+    hsl(var(--muted)) 25%,
+    hsl(var(--border)) 50%,
+    hsl(var(--muted)) 75%
+  );
   background-size: 200% 100%;
   animation: skeleton-shimmer 1.5s ease-in-out infinite;
 }

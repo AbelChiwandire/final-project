@@ -175,7 +175,11 @@ export function openAuthModal() {
       }
 
       // Handle authentication
-      const user = new User(username.value, password.value, isSignUp ? email.value : null);
+      const user = new User(
+        username.value,
+        password.value,
+        isSignUp ? email.value : null,
+      );
       let result;
 
       if (action.value === "signin") {
@@ -240,7 +244,9 @@ export function openAuthModal() {
         const usernameValidation = form.querySelector("#username-validation");
         const passwordValidation = form.querySelector("#password-validation");
         const emailValidation = form.querySelector("#email-validation");
-        const passwordRequirements = form.querySelector("#password-requirements");
+        const passwordRequirements = form.querySelector(
+          "#password-requirements",
+        );
         const passwordToggle = form.querySelector("#password-toggle");
         const emailField = form.querySelector(".email-field");
 
